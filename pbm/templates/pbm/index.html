@@ -1,0 +1,56 @@
+{% extends "_base_bigpandamon.html" %}{% load url from future %}{% load pbm_extras %}
+{% block title %}PanDA Brokerage Monitor{% endblock %}
+{% block page_title %}PanDA Brokerage Monitor{% endblock %}
+{% block bl_page_title %}PanDA Brokerage Monitor{% endblock %}
+{% block gacode %}UA-44940804-1{% endblock %}
+{% block gaweb %}pandawms.org{% endblock %}
+{% block subtitle %}PanDA Brokerage
+{% if scope %} for <span style="font-weight: bold;">scope</span>={{scope}}
+{% if lfn %} <span style="font-weight: bold;">lfn</span>={{lfn}}{% endif %}{% endif %}
+{% endblock %}
+{% block header-nav-chain-1 %}<a href="#">PanDA Brokerage</a>{% endblock %}{% block header-nav-chain-1-separator %}{{ SEPARATOR_NAVIGATION_ITEM|safe }}{% endblock %}
+{% block header-nav-chain-2 %}{% endblock %}{% block header-nav-chain-2-separator %}{% endblock %}
+{% block header-nav-chain-3 %}{% endblock %}{% block header-nav-chain-3-separator %}{% endblock %}
+{% block header-nav-chain-4 %}{% endblock %}{% block header-nav-chain-4-separator %}{% endblock %}
+{% block header-nav-chain-5 %}{% endblock %}{% block header-nav-chain-5-separator %}{% endblock %}
+{% block header-nav-chain-6 %}{% endblock %}
+{% block left_menu %}{% endblock %}
+{% block body_mobile %}{% endblock %}
+{% block body %}
+<div><span style="color: navy; font-weight: bold;">Query parameters</span></div>
+Showing data for {{ndays}} days from {{startdate}} to {{enddate}}.
+
+<br/><br/><br/><br/><br/><br/>
+<!-- Plot 1: [User selected a site/User selected a cloud/PanDA Brokerage decision] on Jobs -->
+{% pbm_plot_pie data01 title01 'plot01' %}
+
+<br/><br/><br/><br/><br/><br/>
+<!-- Plot 2: [User selected a site/User selected a cloud/Panda Brokerage decision] on jobDef -->
+{% pbm_plot_pie data02 title02 'plot02' %}
+
+<br/><br/><br/><br/><br/><br/>
+<!-- Plot 3: [User selected a site/User selected a cloud/Panda Brokerage decision] on jobSet -->
+{% pbm_plot_pie data03 title03 'plot03' %}
+
+
+
+{% comment %}
+<br/><br/><br/><br/><br/><br/>
+<!-- DEBUG: all data -->
+{% for x in dataXX %}{{x}}<br/>{% endfor %}
+
+{% endcomment %}
+
+
+
+{% endblock %}
+
+{% block extra_css %}{% endblock %}
+{% block extra_js %}
+	<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}/js/highcharts/highcharts.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}/js/highcharts/modules/exporting.js"></script>
+{% endblock %}
+{% block extra_js_bottombody %}
+{% endblock %}
+
