@@ -36,9 +36,9 @@ $(function () {
 			data: {{ data|safe }}
 		}]
 	}, 
-		function (chart) { // on complete
+	function (chart) { // on complete
 		chart.renderer.image('http://bigpanda.cern.ch/static/images/favicon.png', 20, 60, 30, 30)
 			.add();
-		});
+	});
 });
 </script>
