@@ -1,7 +1,6 @@
 {% load url from future %}{% load pbm_extras %}
 
-<div><span style="color: navy; font-weight: bold;">{{ title }}</span></div>
-<div id="{{ divid }}"></div>
+<div id="{{ divid }}" style="min-width: 450px; height: 500px; max-width: 800px; margin: 0 auto"></div>
 
 <script type="text/javascript" charset="utf-8">
 $(function () {
@@ -36,6 +35,10 @@ $(function () {
 			name: '{{ title }}',
 			data: {{ data|safe }}
 		}]
-	});
+	}, 
+		function (chart) { // on complete
+		chart.renderer.image('http://bigpanda.cern.ch/static/images/favicon.png', 20, 60, 30, 30)
+			.add();
+		});
 });
 </script>
