@@ -15,7 +15,6 @@ from .utils import CATEGORY_LABELS, PLOT_TITLES, COLORS, defaultDatetimeFormat, 
 configure, \
 prepare_data_for_piechart, prepare_colors_for_piechart, \
 data_plot_groupby_category
-#, get_colors1 as get_colors
 
 _logger = logging.getLogger('bigpandamon-pbm')
 
@@ -320,12 +319,18 @@ def index(request):
         pre_data_20 = DailyLog.objects.filter(**query).values('category', 'jobset')
         excluded = list(set([ x['jobset'] for x in pre_data_20 if x['category'] == 'E']))
         not_excluded = list(set([ x['jobset'] for x in pre_data_20 if x['category'] != 'E']))
+        if len(excluded) + len(not_excluded) < 1:
+            percent_excluded = '%.2f%%' % (0.0)
+            percent_not_excluded = '%.2f%%' % (0.0)
+        else:
+            percent_excluded = '%.2f%%' % (100.0 * len(excluded) / (len(excluded) + len(not_excluded)))
+            percent_not_excluded = '%.2f%%' % (100.0 * len(not_excluded) / (len(excluded) + len(not_excluded)))
         data20.append({'category': 'E', 'sum': len(excluded), \
-                       'percent': '%.2f%%' % (100.0 * len(excluded) / (len(excluded) + len(not_excluded))), \
+                       'percent': percent_excluded, \
                        'label': CATEGORY_LABELS[ 'E+' ]\
                        })
         data20.append({'category': 'ABC', 'sum': len(not_excluded), \
-                       'percent': '%.2f%%' % (100.0 * len(not_excluded) / (len(excluded) + len(not_excluded))), \
+                       'percent': percent_not_excluded, \
                        'label': CATEGORY_LABELS[ 'E-' ]\
                        })
     if '20' in COLORS:
@@ -597,13 +602,13 @@ def index(request):
 ##
 ##        'data10': prepare_data_for_piechart(data=data10, unit='jobs', cutoff=1.0),
 ##        'title10': PLOT_TITLES['title10'],
-##        'colors10': get_colors(data10, cutoff=1.0),
+##        'colors10': prepare_colors_for_piechart(data10, cutoff=1.0),
 ##        'data11': prepare_data_for_piechart(data=data11, unit='jobDefs'),
 ##        'title11': PLOT_TITLES['title11'],
-##        'colors11': get_colors(data11),
+##        'colors11': prepare_colors_for_piechart(data11),
 ##        'data12': prepare_data_for_piechart(data=data12, unit='jobSets'),
 ##        'title12': PLOT_TITLES['title12'],
-##        'colors12': get_colors(data12),
+##        'colors12': prepare_colors_for_piechart(data12),
 ##
         'data13': prepare_data_for_piechart(data=data13, unit='jobs'),
         'title13': PLOT_TITLES['title13'],

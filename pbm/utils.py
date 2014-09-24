@@ -154,8 +154,6 @@ def prepare_data_for_piechart(data, unit='jobs', cutoff=None):
             piechart_data.append([ str('%s (%s %s)' % (item['label'], item['sum'], unit)), item['sum']])
     if other_item_sum > 0:
         piechart_data.append(['Other (%s %s)' % (other_item_sum, unit), other_item_sum])
-    if not len(piechart_data):
-        piechart_data.append(['No data available', 0])
     return piechart_data
 
 
@@ -266,47 +264,5 @@ def data_plot_groupby_category(query, values=['category'], \
                 item['label'] = item[label_cols[0]]
         data01.append(item)
     return data01
-
-
-#def get_colors1(data, cutoff=None):
-#    colors = []
-#    others = False
-#    counter = {}
-#    ### init cloud item counters
-#    for cloud in ADC_COLOR.keys():
-#        counter[cloud] = 0
-#    ### loop over data, increment cloud counters -> get predefined colors for sites
-#    for item in data:
-#        append = True
-#        if cutoff is not None:
-#            if cutoff < float(item['percent'][:-1]):
-#                append = True
-#            else:
-#                append = False
-#                others = True
-#        if append:
-##            print '### item=', item
-#            try:
-#                cloud = item['cloud']
-#                if cloud in counter:
-#                    print 'cloud', cloud, 'idx before', counter[cloud]
-#                    item_color = ADC_COLOR[cloud][counter[cloud]]
-#                    counter[cloud] += 1
-#                    print 'cloud', cloud, 'idx after', counter[cloud]
-#                else:
-#                    item_color = '#FFFFFF'
-#            except:
-#                item_color = '#FFFFFF'
-#            print 'item_color=', item_color
-#            colors.append(item_color)
-#    if others:
-#        print 'item=', 'other'
-#        print 'item_color=', '#030303'
-#        colors.append('#030303')
-##    print '### data', data
-##    print '### colors', colors
-#    return colors
-#
-#
 
 

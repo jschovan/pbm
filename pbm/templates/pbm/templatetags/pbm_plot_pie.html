@@ -5,7 +5,6 @@
 #sec.{{ divid }}">[permalink]</a>
 
 
-
 <div id="{{ divid }}" style="min-width: 450px; height: 500px; max-width: 800px; margin: 0 auto"></div>
 
 
@@ -62,6 +61,9 @@ $(function () {
 		{% else %}
 			chart.renderer.image('http://bigpanda.cern.ch/static/images/favicon.png', 20, 60, 30, 30)
 				.add();
+		{% endif %}
+		{% if not data|length %}
+			chart.renderer.text('<span style="font-size:xx-large;">No data available.', 275, 275).add();
 		{% endif %}
 	});
 });
