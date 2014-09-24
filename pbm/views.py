@@ -363,7 +363,6 @@ def index(request):
     query['logdate__range'] = [startdate, enddate]
     ### filter category__in
     query['category__in'] = ['A', 'B', 'C', 'E']
-    ### User selected a site/User selected a cloud/Panda Brokerage decision
     ###     Plot 20: User excluded a site on distinct jobSet - With exclude / Without exclude
     data20 = []
     try:
@@ -392,8 +391,122 @@ def index(request):
                        'percent': '%.2f%%' % (100.0 * len(not_excluded) / (len(excluded) + len(not_excluded))), \
                        'label': CATEGORY_LABELS[ 'E-' ]\
                        })
-        print 'data20', data20
-        print prepare_data_for_piechart(data=data20, unit='jobSets')
+
+
+
+    ### User excluded a site on jobSet - Top sites with share > 1 %
+    query = {}
+    ### filter logdate__range
+    query['logdate__range'] = [startdate, enddate]
+    ### filter category__in
+    query['category__in'] = ['E']
+    ###     Plot 21: User excluded a site on jobSet - Top sites with share > 1 %
+    data21 = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_21 = DailyLog.objects.filter(**query).distinct('jobset').values('site', 'cloud').annotate(sum=Count('jobset')).order_by('cloud', 'site')
+        total_data_21 = sum([x['sum'] for x in pre_data_21])
+        for item in pre_data_21:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_21)
+            item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            data21.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_21 = DailyLog.objects.filter(**query).values('site', 'cloud', 'jobset')
+        categories = list(set([ (x['site'], x['cloud']) for x in pre_data_21]))
+        pre2_data_21 = []
+        total_data_21 = 0
+        for category,cat2 in sorted(categories):
+            jobsets_for_category = list(set([x['jobset'] for x in pre_data_21 if x['site'] == category]))
+            pre2_data_21.append({'site': category, 'cloud': cat2, 'sum': len(jobsets_for_category)})
+            total_data_21 += len(jobsets_for_category)
+        for item in pre2_data_21:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_21)
+            item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            data21.append(item)
+
+    ###     Plot 22: User excluded a site on distinct DnUser - Top sites with share > 1 %
+    data22 = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_22 = DailyLog.objects.filter(**query).distinct('dnuser').values('site', 'cloud').annotate(sum=Count('dnuser')).order_by('cloud', 'site')
+        total_data_22 = sum([x['sum'] for x in pre_data_22])
+        for item in pre_data_22:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_22)
+            item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            data22.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_22 = DailyLog.objects.filter(**query).values('site', 'cloud', 'dnuser')
+        categories = list(set([ (x['site'], x['cloud']) for x in pre_data_22]))
+        pre2_data_22 = []
+        total_data_22 = 0
+        for category, cat2 in sorted(categories):
+            dnusers_for_category = list(set([x['dnuser'] for x in pre_data_22 if x['site'] == category]))
+            pre2_data_22.append({'site': category, 'cloud': cat2, 'sum': len(dnusers_for_category)})
+            total_data_22 += len(dnusers_for_category)
+        for item in pre2_data_22:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_22)
+            item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            data22.append(item)
+
+
+    ### User excluded a site on jobSet - Per cloud
+    query = {}
+    ### filter logdate__range
+    query['logdate__range'] = [startdate, enddate]
+    ### filter category__in
+    query['category__in'] = ['E']
+    ###     Plot 23: User excluded a site on jobSet - Per cloud
+    data23 = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_23 = DailyLog.objects.filter(**query).distinct('jobset').values('cloud').annotate(sum=Count('jobset')).order_by('cloud')
+        total_data_23 = sum([x['sum'] for x in pre_data_23])
+        for item in pre_data_23:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_23)
+            item['label'] = item['cloud']
+            data23.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_23 = DailyLog.objects.filter(**query).values('cloud', 'jobset')
+        categories = list(set([ x['cloud'] for x in pre_data_23]))
+        pre2_data_23 = []
+        total_data_23 = 0
+        for category in sorted(categories):
+            jobsets_for_category = list(set([x['jobset'] for x in pre_data_23 if x['cloud'] == category]))
+            pre2_data_23.append({'cloud': category, 'sum': len(jobsets_for_category)})
+            total_data_23 += len(jobsets_for_category)
+        for item in pre2_data_23:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_23)
+            item['label'] = item['cloud']
+            data23.append(item)
+
+    ###     Plot 24: User excluded a site on distinct DnUser - Per cloud
+    data24 = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_24 = DailyLog.objects.filter(**query).distinct('dnuser').values('cloud').annotate(sum=Count('dnuser')).order_by('cloud')
+        total_data_24 = sum([x['sum'] for x in pre_data_24])
+        for item in pre_data_24:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_24)
+            item['label'] = item['cloud']
+            data24.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_24 = DailyLog.objects.filter(**query).values('site', 'cloud', 'dnuser')
+        categories = list(set([ x['cloud'] for x in pre_data_24]))
+        pre2_data_24 = []
+        total_data_24 = 0
+        for category in sorted(categories):
+            dnusers_for_category = list(set([x['dnuser'] for x in pre_data_24 if x['cloud'] == category]))
+            pre2_data_24.append({'cloud': category, 'sum': len(dnusers_for_category)})
+            total_data_24 += len(dnusers_for_category)
+        for item in pre2_data_24:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_24)
+            item['label'] = item['cloud']
+            data24.append(item)
+
 
 
 
@@ -446,10 +559,18 @@ def index(request):
 #        'title18': PLOT_TITLES['title18'],
 #        'data19': prepare_data_for_piechart(data=data19, unit='jobDefs'),
 #        'title19': PLOT_TITLES['title19'],
-
-        'data20': prepare_data_for_piechart(data=data20, unit='jobSets'),
-        'title20': PLOT_TITLES['title20'],
-#        'dataXX': dataXX,
+#
+#        'data20': prepare_data_for_piechart(data=data20, unit='jobSets'),
+#        'title20': PLOT_TITLES['title20'],
+#
+#        'data21': prepare_data_for_piechart(data=data21, unit='jobSets', cutoff=1.0),
+#        'title21': PLOT_TITLES['title21'],
+#        'data22': prepare_data_for_piechart(data=data22, unit='UserDNs', cutoff=1.0),
+#        'title22': PLOT_TITLES['title22'],
+        'data23': prepare_data_for_piechart(data=data23, unit='jobSets'),
+        'title23': PLOT_TITLES['title24'],
+        'data24': prepare_data_for_piechart(data=data24, unit='UserDNs'),
+        'title24': PLOT_TITLES['title24'],
 
 }
     return render_to_response('pbm/index.html', data, RequestContext(request))

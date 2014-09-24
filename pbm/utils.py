@@ -45,6 +45,11 @@ PLOT_TITLES = {
 
     'title20': 'User excluded a site on distinct jobSet - With exclude / Without exclude', \
 
+    'title21': 'User excluded a site on jobSet - Top sites with share > 1 %', \
+    'title22': 'User excluded a site on distinct DnUser - Top sites with share > 1 %', \
+    'title23': 'User excluded a site on jobSet - Per cloud', \
+    'title24': 'User excluded a site on distinct DnUser - Per cloud', \
+
 }
 
 
