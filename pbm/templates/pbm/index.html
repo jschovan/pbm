@@ -36,10 +36,27 @@ Showing data for {{ndays}} days from {{startdate}} to {{enddate}}.
 	<a href="#sec.plot05">on jobDefs</a>,
 	<a href="#sec.plot06">on jobSets</a>
 </p>
+<p>User selected a site - Per cloud 
+	<a href="#sec.plot07">on jobs</a>,
+	<a href="#sec.plot08">on jobDefs</a>,
+	<a href="#sec.plot09">on jobSets</a>
+</p>
+{% comment %}
+<p>User selected a cloud - Top sites with share &gt; 1 % 
+	<a href="#sec.plot10">on jobs</a>,
+	<a href="#sec.plot11">on jobDefs</a>,
+	<a href="#sec.plot12">on jobSets</a>
+</p>
+{% endcomment %}
+<p>User selected a cloud - Per cloud 
+	<a href="#sec.plot13">on jobs</a>,
+	<a href="#sec.plot14">on jobDefs</a>,
+	<a href="#sec.plot15">on jobSets</a>
+</p>
 </div>
 
 {% comment %}
-{% endcomment %}
+
 
 <br/><br/><br/>
 
@@ -64,20 +81,89 @@ User selected a site vs. User selected a cloud vs. PanDA Brokerage decision
 <br/><br/><br/>
 
 <div><span style="color: navy; font-weight: bold;">
-User selected a site
+User selected a site - Top sites with share &gt; 1 %
 </span></div><br/>
 
 <br/>
-<!-- Plot 4: [User selected a site] on Jobs -->
+<!-- Plot 4: [User selected a site] on Jobs - Top sites with &gt; 1 % -->
 {% pbm_plot_pie data04 title04 'plot04' %}
 
 <br/>
-<!-- Plot 5: [User selected a site] on jobDef -->
+<!-- Plot 5: [User selected a site] on jobDef - Top sites with &gt; 1 % -->
 {% pbm_plot_pie data05 title05 'plot05' %}
 
 <br/>
-<!-- Plot 6: [User selected a site] on jobSet -->
+<!-- Plot 6: [User selected a site] on jobSet - Top sites with &gt; 1 % -->
 {% pbm_plot_pie data06 title06 'plot06' %}
+
+
+
+<br/><br/><br/>
+
+<div><span style="color: navy; font-weight: bold;">
+User selected a site - Per cloud
+</span></div><br/>
+
+<br/>
+<!-- Plot 7: [User selected a site] on Jobs - Per cloud -->
+{% pbm_plot_pie data07 title07 'plot07' %}
+
+<br/>
+<!-- Plot 8: [User selected a site] on jobDef - Per cloud  -->
+{% pbm_plot_pie data08 title08 'plot08' %}
+
+<br/>
+<!-- Plot 9: [User selected a site] on jobSet - Per cloud  -->
+{% pbm_plot_pie data09 title09 'plot09' %}
+
+
+{% endcomment %}
+
+
+
+{% comment %}
+
+
+<br/><br/><br/>
+
+<div><span style="color: navy; font-weight: bold;">
+User selected a cloud - Top sites with share &gt; 1 %
+</span></div><br/>
+
+<br/>
+<!-- Plot 10: [User selected a cloud] on Jobs - Top sites with &gt; 1 % -->
+{% pbm_plot_pie data10 title10 'plot10' %}
+
+<br/>
+<!-- Plot 11: [User selected a cloud] on jobDef - Top sites with &gt; 1 % -->
+{% pbm_plot_pie data11 title11 'plot11' %}
+
+<br/>
+<!-- Plot 12: [User selected a cloud] on jobSet - Top sites with &gt; 1 % -->
+{% pbm_plot_pie data12 title12 'plot12' %}
+
+
+{% endcomment %}
+
+
+<br/><br/><br/>
+
+<div><span style="color: navy; font-weight: bold;">
+User selected a cloud - Per cloud
+</span></div><br/>
+
+<br/>
+<!-- Plot 13: [User selected a cloud] on Jobs - Per cloud -->
+{% pbm_plot_pie data13 title13 'plot13' %}
+
+<br/>
+<!-- Plot 14: [User selected a cloud] on jobDef - Per cloud  -->
+{% pbm_plot_pie data14 title14 'plot14' %}
+
+<br/>
+<!-- Plot 15: [User selected a cloud] on jobSet - Per cloud  -->
+{% pbm_plot_pie data15 title15 'plot15' %}
+
 
 
 
@@ -87,7 +173,6 @@ User selected a site
 {% for x in dataXX %}{{x}}<br/>{% endfor %}
 
 {% endcomment %}
-
 
 
 {% endblock %}

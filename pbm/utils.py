@@ -18,9 +18,28 @@ PLOT_TITLES = {
     'title01': 'User selected a site/User selected a cloud/PanDA Brokerage decision on Jobs', \
     'title02': 'User selected a site/User selected a cloud/PanDA Brokerage decision on jobDef', \
     'title03': 'User selected a site/User selected a cloud/PanDA Brokerage decision on jobSet', \
+
     'title04': 'User selected a site on Jobs - Top sites with share > 1 %', \
     'title05': 'User selected a site on jobDef - Top sites with share > 1 %', \
     'title06': 'User selected a site on jobSet - Top sites with share > 1 %', \
+    'title07': 'User selected a site on Jobs - Per cloud', \
+    'title08': 'User selected a site on JobDef - Per cloud', \
+    'title09': 'User selected a site on JobSet - Per cloud', \
+
+    ### plots 10 .. 12 are not used, we don't have data for them, since site==cloud for them
+    'title10': 'User selected a cloud on Jobs - Top sites with share > 1 %', \
+    'title11': 'User selected a cloud on jobDef - Top sites with share > 1 %', \
+    'title12': 'User selected a cloud on jobSet - Top sites with share > 1 %', \
+    'title13': 'User selected a cloud on Jobs - Per cloud', \
+    'title14': 'User selected a cloud on JobDef - Per cloud', \
+    'title15': 'User selected a cloud on JobSet - Per cloud', \
+
+    'title16': 'PanDA Brokerage decision on Jobs - Top sites with share > 1 %', \
+    'title17': 'PanDA Brokerage decision on JobDef - Top sites with share > 1 %', \
+
+    'title18': 'PanDA Brokerage decision on Jobs - Per cloud', \
+    'title19': 'PanDA Brokerage decision on JobDef - Per cloud', \
+
 }
 
 
