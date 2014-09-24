@@ -15,7 +15,7 @@ register = template.Library()
 
 @register.simple_tag
 def pbm_plot_pie(data, title='', divid='plot', startdate='', enddate='', \
-        colors=[], \
+        colors=[], plotid='', \
         template='pbm/templatetags/pbm_plot_pie.html', *args, **kwargs):
     """
         Template tag to plot data in a higcharts pie plot.
@@ -28,12 +28,13 @@ def pbm_plot_pie(data, title='', divid='plot', startdate='', enddate='', \
         'startdate': startdate, \
         'enddate': enddate, \
         'colors': colors, \
+        'plotid': plotid, \
     }
     return render_to_string(template, returnData)
 
 @register.simple_tag
 def pbm_table_pie(data, title='', divid='plot', startdate='', enddate='', \
-        colors=[], \
+        colors=[], plotid='', \
         template='pbm/templatetags/pbm_table_pie.html', *args, **kwargs):
     """
         Template tag to show tabular data of a plot.
@@ -46,6 +47,7 @@ def pbm_table_pie(data, title='', divid='plot', startdate='', enddate='', \
         'startdate': startdate, \
         'enddate': enddate, \
         'colors': colors, \
+        'plotid': plotid, \
     }
     return render_to_string(template, returnData)
 

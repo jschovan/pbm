@@ -264,7 +264,6 @@ def index(request):
         'data27': prepare_data_for_piechart(data=data27, unit=unit27, cutoff=1.0),
         'title27': title27,
         'colors27': colors27,
-
     }
     return render_to_response('pbm/index.html', data, RequestContext(request))
 
@@ -300,8 +299,7 @@ def single_plot(request):
         'titleX': titleX,
         'colorsX': colorsX,
         'plotid': plotid,
-
-}
+    }
     return render_to_response('pbm/plot.html', data, RequestContext(request))
 
 
@@ -336,8 +334,42 @@ def single_table(request):
         'titleX': titleX,
         'colorsX': colorsX,
         'plotid': plotid,
-
-}
+    }
     return render_to_response('pbm/table.html', data, RequestContext(request))
 
+
+
+def detail(request):
+    """
+        detail -- pbm's page to view tabular data + a plot
+        
+        :param request: Django's HTTP request 
+        :type request: django.http.HttpRequest
+        
+    """
+    ### configure time interval for queries
+    startdate, enddate, ndays, errors_GET = configure(request.GET)
+    plotid = configure_plot(request.GET)
+
+    ### start the query parameters
+    query = {}
+    ### filter logdate__range
+    query['logdate__range'] = [startdate, enddate]
+
+    dataX, colorsX, titleX, unitX = plot(plotid, query)
+
+
+    ### set request response data
+    data = { \
+        'errors_GET': errors_GET,
+        'startdate': startdate,
+        'enddate': enddate,
+        'ndays': ndays,
+
+        'dataX': prepare_data_for_piechart(data=dataX, unit=unitX),
+        'titleX': titleX,
+        'colorsX': colorsX,
+        'plotid': plotid,
+    }
+    return render_to_response('pbm/detail.html', data, RequestContext(request))
 

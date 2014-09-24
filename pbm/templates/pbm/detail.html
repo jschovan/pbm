@@ -1,14 +1,14 @@
 {% extends "pbm/index.html" %}{% load url from future %}{% load pbm_extras %}
 {% block header-nav-chain-1 %}<a href="{% url 'pbm-index' %}{% if startdate %}?startdate={{ startdate }}{% endif %}{% if enddate %}&amp;enddate={{ enddate }}{% endif %}">PanDA Brokerage</a>{% endblock %}
 {% block header-nav-chain-1-separator %}&nbsp;&#187;&nbsp;{% endblock %}
-{% block header-nav-chain-2 %}<a href="{% url 'pbm-table' %}{% if startdate %}?startdate={{ startdate }}{% endif %}{% if enddate %}&amp;enddate={{ enddate }}{% endif %}{% if plotid %}&amp;plotid={{ plotid }}{% endif %}{% endblock %}
-{% block header-nav-chain-2-separator %}">Single table</a>{% endblock %}
+{% block header-nav-chain-2 %}<a href="{% url 'pbm-detail' %}{% if startdate %}?startdate={{ startdate }}{% endif %}{% if enddate %}&amp;enddate={{ enddate }}{% endif %}{% if plotid %}&amp;plotid={{ plotid }}{% endif %}{% endblock %}
+{% block header-nav-chain-2-separator %}">Detail of a plot</a>{% endblock %}
 {% block body %}
 <a name="sec.toc"></a>
 <div><span style="color: navy; font-weight: bold;">Query parameters</span></div>
 <br/>
 Showing data for interval from {{startdate}} to {{enddate}}.
-<br/>Showing a single plot: &quot;{{ titleX }}&quot;.
+<br/>Showing tabular data of a single plot: &quot;{{ titleX }}&quot;.
 {% if errors_GET %}
 {% if errors_GET.noparams %}
 	<div><span style="color: red; font-weight: bold;">Query warning.</span> {{errors_GET.noparams}}</div>
@@ -21,6 +21,10 @@ Showing data for interval from {{startdate}} to {{enddate}}.
 
 <br/><br/><br/>
 <div><span style="color: navy; font-weight: bold;">{{ titleX }}</span></div>
+<br/>
+
+{% pbm_plot_pie dataX titleX 'plotX' startdate enddate colorsX|safe plotid|safe %}
+
 <br/>
 
 {% pbm_table_pie dataX titleX 'tableX' startdate enddate colorsX|safe plotid|safe %}

@@ -1,8 +1,11 @@
 {% load url from future %}{% load pbm_extras %}
 
 <a href="#sec.toc">[top]</a>&nbsp;
-<a name="sec.{{ divid }}" href="{% url 'pbm-index' %}{% if startdate %}?startdate={{ startdate }}{% endif %}{% if enddate %}&amp;enddate={{ enddate }}{% endif %}
-#sec.{{ divid }}">[permalink]</a>
+<a name="sec.{{ divid }}" href="{% url 'pbm-detail' %}{% if startdate %}?startdate={{ startdate }}{% endif %}{% if enddate %}&amp;enddate={{ enddate }}{% endif %}{% if plotid %}&amp;plotid={{ plotid }}{% endif %}#sec.toc">[permalink]</a>&nbsp;
+<a name="sec.{{ divid }}" href="{% url 'pbm-plot' %}{% if startdate %}?startdate={{ startdate }}{% endif %}{% if enddate %}&amp;enddate={{ enddate }}{% endif %}{% if plotid %}&amp;plotid={{ plotid }}{% endif %}#sec.toc">[plot only]</a>&nbsp;
+<a name="sec.{{ divid }}" href="{% url 'pbm-table' %}{% if startdate %}?startdate={{ startdate }}{% endif %}{% if enddate %}&amp;enddate={{ enddate }}{% endif %}{% if plotid %}&amp;plotid={{ plotid }}{% endif %}#sec.toc">[table only]</a>&nbsp;
+<a name="sec.{{ divid }}" href="{% url 'pbm-index' %}{% if startdate %}?startdate={{ startdate }}{% endif %}{% if enddate %}&amp;enddate={{ enddate }}{% endif %}#sec.toc">[all plots]</a>&nbsp;
+
 
 
 <div id="{{ divid }}" style="min-width: 450px; height: 500px; max-width: 800px; margin: 0 auto"></div>
