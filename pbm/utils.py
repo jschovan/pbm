@@ -192,7 +192,7 @@ def configure(request_GET):
     errors_GET = {}
     ### if startdate&enddate are provided, use them
     if 'startdate' in request_GET and 'enddate' in request_GET:
-        ndays = 7
+        ndays = -1
         ### startdate
         startdate = request_GET['startdate']
         try:
@@ -216,16 +216,16 @@ def configure(request_GET):
     ### if ndays is provided, do query "last N days"
     elif 'ndays' in request_GET:
         try:
-            ndays = request_GET['ndays']
+            ndays = int(request_GET['ndays'])
         except:
             ndays = 8
             errors_GET['ndays'] = \
-                'No ndays has been provided.Using [%s].' % \
+                'Wrong or no ndays has been provided.Using [%s].' % \
                 (ndays)
-            startdate = datetime.utcnow() - timedelta(days=ndays)
-            startdate = startdate.replace(tzinfo=pytz.utc).strftime(defaultDatetimeFormat)
-            enddate = datetime.utcnow()
-            enddate = enddate.replace(tzinfo=pytz.utc).strftime(defaultDatetimeFormat)
+        startdate = datetime.utcnow() - timedelta(days=ndays)
+        startdate = startdate.replace(tzinfo=pytz.utc).strftime(defaultDatetimeFormat)
+        enddate = datetime.utcnow()
+        enddate = enddate.replace(tzinfo=pytz.utc).strftime(defaultDatetimeFormat)
     ### neither ndays, nor startdate&enddate was provided
     else:
         ndays = 8
