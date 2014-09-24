@@ -310,3 +310,612 @@ def data_plot_groupby_category(query, values=['category'], \
     return data01
 
 
+def plot_nothing(id, query):
+    return [], [], PLOT_TITLES['title' + id]
+
+
+def plot_01(id, query):
+    if 'category' in query:
+        del query['category']
+    query['category__in'] = ['A', 'B', 'C']
+    data = data_plot_groupby_category(query, values=['category'], sum_param='jobcount', \
+                    label_cols=['category'], label_translation=True)
+    colors = COLORS[id]
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_02(id, query):
+    if 'category' in query:
+        del query['category']
+    query['category__in'] = ['A', 'B', 'C']
+    data = data_plot_groupby_category(query, values=['category'], sum_param='jobdefcount', \
+                    label_cols=['category'], label_translation=True)
+    colors = COLORS[id]
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_03(id, query):
+    if 'category' in query:
+        del query['category']
+    query['category__in'] = ['A', 'B', 'C']
+    data = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_03 = DailyLog.objects.filter(**query).distinct('jobset').values('category').annotate(sum=Count('jobset'))
+        total_data_03 = sum([x['sum'] for x in pre_data_03])
+        for item in pre_data_03:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_03)
+            item['label'] = CATEGORY_LABELS[ item['category'] ]
+            data.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_03 = DailyLog.objects.filter(**query).values('category', 'jobset')
+        categories = list(set([ x['category'] for x in pre_data_03]))
+        pre2_data_03 = []
+        total_data_03 = 0
+        for category in sorted(categories):
+            jobsets_for_category = list(set([x['jobset'] for x in pre_data_03 if x['category'] == category]))
+            pre2_data_03.append({'category': category, 'sum': len(jobsets_for_category)})
+            total_data_03 += len(jobsets_for_category)
+        for item in pre2_data_03:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_03)
+            item['label'] = CATEGORY_LABELS[ item['category'] ]
+            data.append(item)
+    colors = COLORS[id]
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_04(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'A'
+    data = data_plot_groupby_category(query, values=['category', 'site', 'cloud'], sum_param='jobcount', \
+                    label_cols=['site', 'cloud'], label_translation=False, \
+                    order_by=['cloud', 'site'])
+    colors = prepare_colors_for_piechart(data, cutoff=1.0)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_05(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'A'
+    data = data_plot_groupby_category(query, values=['category', 'site', 'cloud'], sum_param='jobdefcount', \
+                    label_cols=['site', 'cloud'], label_translation=False, \
+                    order_by=['cloud', 'site'])
+    colors = prepare_colors_for_piechart(data)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_06(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'A'
+    data = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_06 = DailyLog.objects.filter(**query).distinct('jobset').values('site', 'cloud').annotate(sum=Count('jobset')).order_by('cloud', 'site')
+        total_data_06 = sum([x['sum'] for x in pre_data_06])
+        for item in pre_data_06:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_06)
+            item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            item['name'] = item['site']
+            data.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_06 = DailyLog.objects.filter(**query).values('site', 'cloud', 'jobset').order_by('cloud', 'site')
+        categories = list(set([ (x['site'], x['cloud']) for x in pre_data_06]))
+        pre2_data_06 = []
+        total_data_06 = 0
+        for category, cat2 in sorted(categories):
+            jobsets_for_category = list(set([x['jobset'] for x in pre_data_06 if x['site'] == category]))
+            pre2_data_06.append({'site': category, 'cloud': cat2, 'sum': len(jobsets_for_category)})
+            total_data_06 += len(jobsets_for_category)
+        for item in pre2_data_06:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_06)
+            item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            item['name'] = item['site']
+            data.append(item)
+    colors = prepare_colors_for_piechart(data)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_07(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'A'
+    data = data_plot_groupby_category(query, values=['category', 'cloud'], sum_param='jobcount', \
+                    label_cols=['cloud'], label_translation=False)
+    colors = prepare_colors_for_piechart(data)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_08(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'A'
+    data = data_plot_groupby_category(query, values=['category', 'cloud'], sum_param='jobdefcount', \
+                    label_cols=['cloud'], label_translation=False)
+    colors = prepare_colors_for_piechart(data)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_09(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'A'
+    data = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_09 = DailyLog.objects.filter(**query).distinct('jobset').values('cloud').annotate(sum=Count('jobset'))
+        total_data_09 = sum([x['sum'] for x in pre_data_09])
+        for item in pre_data_09:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_09)
+            item['label'] = item['cloud']
+            item['name'] = item['cloud']
+            data.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_09 = DailyLog.objects.filter(**query).values('cloud', 'jobset')
+        categories = list(set([ x['cloud'] for x in pre_data_09]))
+        pre2_data_09 = []
+        total_data_09 = 0
+        for category in sorted(categories):
+            jobsets_for_category = list(set([x['jobset'] for x in pre_data_09 if x['cloud'] == category]))
+            pre2_data_09.append({'cloud': category, 'sum': len(jobsets_for_category)})
+            total_data_09 += len(jobsets_for_category)
+        for item in pre2_data_09:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_09)
+            item['label'] = item['cloud']
+            item['name'] = item['cloud']
+            data.append(item)
+    colors = prepare_colors_for_piechart(data)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_13(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'B'
+    data = data_plot_groupby_category(query, values=['category', 'cloud'], sum_param='jobcount', \
+                    label_cols=['cloud'], label_translation=False)
+    colors = prepare_colors_for_piechart(data)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_14(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'B'
+    data = data_plot_groupby_category(query, values=['category', 'cloud'], sum_param='jobdefcount', \
+                    label_cols=['cloud'], label_translation=False)
+    colors = prepare_colors_for_piechart(data)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_15(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'B'
+    data = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_15 = DailyLog.objects.filter(**query).distinct('jobset').values('cloud').annotate(sum=Count('jobset'))
+        total_data_15 = sum([x['sum'] for x in pre_data_15])
+        for item in pre_data_15:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_15)
+            item['label'] = item['cloud']
+            item['name'] = item['cloud']
+            data.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_15 = DailyLog.objects.filter(**query).values('cloud', 'jobset')
+        categories = list(set([ x['cloud'] for x in pre_data_15]))
+        pre2_data_15 = []
+        total_data_15 = 0
+        for category in sorted(categories):
+            jobsets_for_category = list(set([x['jobset'] for x in pre_data_15 if x['cloud'] == category]))
+            pre2_data_15.append({'cloud': category, 'sum': len(jobsets_for_category)})
+            total_data_15 += len(jobsets_for_category)
+        for item in pre2_data_15:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_15)
+            item['label'] = item['cloud']
+            item['name'] = item['cloud']
+            data.append(item)
+    colors = prepare_colors_for_piechart(data)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_16(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'C'
+    data = data_plot_groupby_category(query, values=['category', 'site', 'cloud'], sum_param='jobcount', \
+                    label_cols=['site', 'cloud'], label_translation=False, \
+                    order_by=['cloud', 'site'])
+    colors = prepare_colors_for_piechart(data, cutoff=1.0)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_17(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'C'
+    data = data_plot_groupby_category(query, values=['category', 'site', 'cloud'], sum_param='jobdefcount', \
+                    label_cols=['site', 'cloud'], label_translation=False, \
+                    order_by=['cloud', 'site'])
+    colors = prepare_colors_for_piechart(data, cutoff=1.0)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_18(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'C'
+    data = data_plot_groupby_category(query, values=['category', 'cloud'], sum_param='jobcount', \
+                    label_cols=['cloud'], label_translation=False)
+    colors = prepare_colors_for_piechart(data)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_19(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'C'
+    data = data_plot_groupby_category(query, values=['category', 'cloud'], sum_param='jobdefcount', \
+                    label_cols=['cloud'], label_translation=False)
+    colors = prepare_colors_for_piechart(data)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_20(id, query):
+    if 'category' in query:
+        del query['category']
+    query['category__in'] = ['A', 'B', 'C', 'E']
+    data = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_20 = DailyLog.objects.filter(**query).distinct('jobset').values('category').annotate(sum=Count('jobset'))
+        total_data_20 = sum([x['sum'] for x in pre_data_20])
+        pre2_data_20 = []
+        for item in [x for x in pre_data_20 if x['category'] == 'E']:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_20)
+            item['label'] = CATEGORY_LABELS[ 'E+' ]
+            data.append(item)
+        not_excluded = [x for x in pre_data_20 if x['category'] != 'E']
+        for item in not_excluded[:1]:
+            item['percent'] = '%.2f%%' % (100.0 * sum([x['sum'] for x in not_excluded]) / total_data_20)
+            item['label'] = CATEGORY_LABELS[ 'E-' ]
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_20 = DailyLog.objects.filter(**query).values('category', 'jobset')
+        excluded = list(set([ x['jobset'] for x in pre_data_20 if x['category'] == 'E']))
+        not_excluded = list(set([ x['jobset'] for x in pre_data_20 if x['category'] != 'E']))
+        if len(excluded) + len(not_excluded) > 0:
+            data.append({'category': 'E', 'sum': len(excluded), \
+                           'percent': '%.2f%%' % (100.0 * len(excluded) / (len(excluded) + len(not_excluded))), \
+                           'label': CATEGORY_LABELS[ 'E+' ]\
+                           })
+            data.append({'category': 'ABC', 'sum': len(not_excluded), \
+                           'percent': '%.2f%%' % (100.0 * len(not_excluded) / (len(excluded) + len(not_excluded))), \
+                           'label': CATEGORY_LABELS[ 'E-' ]\
+                           })
+    colors = COLORS[id]
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_21(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'E'
+    data = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_21 = DailyLog.objects.filter(**query).distinct('jobset').values('site', 'cloud').annotate(sum=Count('jobset')).order_by('cloud', 'site')
+        total_data_21 = sum([x['sum'] for x in pre_data_21])
+        for item in pre_data_21:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_21)
+            item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            item['name'] = item['site']
+            data.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_21 = DailyLog.objects.filter(**query).values('site', 'cloud', 'jobset')
+        categories = list(set([ (x['site'], x['cloud']) for x in pre_data_21]))
+        pre2_data_21 = []
+        total_data_21 = 0
+        for category, cat2 in sorted(categories):
+            jobsets_for_category = list(set([x['jobset'] for x in pre_data_21 if x['site'] == category]))
+            pre2_data_21.append({'site': category, 'cloud': cat2, 'sum': len(jobsets_for_category)})
+            total_data_21 += len(jobsets_for_category)
+        for item in pre2_data_21:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_21)
+            item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            item['name'] = item['site']
+            data.append(item)
+    colors = prepare_colors_for_piechart(data, cutoff=1.0)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_22(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'E'
+    data = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_22 = DailyLog.objects.filter(**query).distinct('dnuser').values('site', 'cloud').annotate(sum=Count('dnuser')).order_by('cloud', 'site')
+        total_data_22 = sum([x['sum'] for x in pre_data_22])
+        for item in pre_data_22:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_22)
+            item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            item['name'] = item['site']
+            data.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_22 = DailyLog.objects.filter(**query).values('site', 'cloud', 'dnuser')
+        categories = list(set([ (x['site'], x['cloud']) for x in pre_data_22]))
+        pre2_data_22 = []
+        total_data_22 = 0
+        for category, cat2 in sorted(categories):
+            dnusers_for_category = list(set([x['dnuser'] for x in pre_data_22 if x['site'] == category]))
+            pre2_data_22.append({'site': category, 'cloud': cat2, 'sum': len(dnusers_for_category)})
+            total_data_22 += len(dnusers_for_category)
+        for item in pre2_data_22:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_22)
+            item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            item['name'] = item['site']
+            data.append(item)
+    colors = prepare_colors_for_piechart(data, cutoff=1.0)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_23(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'E'
+    data = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_23 = DailyLog.objects.filter(**query).distinct('jobset').values('cloud').annotate(sum=Count('jobset')).order_by('cloud')
+        total_data_23 = sum([x['sum'] for x in pre_data_23])
+        for item in pre_data_23:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_23)
+            item['label'] = item['cloud']
+            item['name'] = item['cloud']
+            data.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_23 = DailyLog.objects.filter(**query).values('cloud', 'jobset')
+        categories = list(set([ x['cloud'] for x in pre_data_23]))
+        pre2_data_23 = []
+        total_data_23 = 0
+        for category in sorted(categories):
+            jobsets_for_category = list(set([x['jobset'] for x in pre_data_23 if x['cloud'] == category]))
+            pre2_data_23.append({'cloud': category, 'sum': len(jobsets_for_category)})
+            total_data_23 += len(jobsets_for_category)
+        for item in pre2_data_23:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_23)
+            item['label'] = item['cloud']
+            item['name'] = item['cloud']
+            data.append(item)
+    colors = prepare_colors_for_piechart(data)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_24(id, query):
+    if 'category__in' in query:
+        del query['category__in']
+    query['category'] = 'E'
+    data = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_24 = DailyLog.objects.filter(**query).distinct('dnuser').values('cloud').annotate(sum=Count('dnuser')).order_by('cloud')
+        total_data_24 = sum([x['sum'] for x in pre_data_24])
+        for item in pre_data_24:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_24)
+            item['label'] = item['cloud']
+            item['name'] = item['cloud']
+            data.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_24 = DailyLog.objects.filter(**query).values('site', 'cloud', 'dnuser')
+        categories = list(set([ x['cloud'] for x in pre_data_24]))
+        pre2_data_24 = []
+        total_data_24 = 0
+        for category in sorted(categories):
+            dnusers_for_category = list(set([x['dnuser'] for x in pre_data_24 if x['cloud'] == category]))
+            pre2_data_24.append({'cloud': category, 'sum': len(dnusers_for_category)})
+            total_data_24 += len(dnusers_for_category)
+        for item in pre2_data_24:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_24)
+            item['label'] = item['cloud']
+            item['name'] = item['cloud']
+            data.append(item)
+    colors = prepare_colors_for_piechart(data)
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_25(id, query):
+    if 'category' in query:
+        del query['category']
+    query['category__in'] = ['A', 'B', 'C', 'E']
+    data = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_25 = DailyLog.objects.filter(**query).distinct('country').values('country', 'jobcount').annotate(sum=Sum('jobcount')).order_by('country')
+        total_data_25 = sum([x['sum'] for x in pre_data_25])
+        for item in pre_data_25:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_25)
+            item['label'] = item['country']
+            item['name'] = item['country']
+            data.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_25 = DailyLog.objects.filter(**query).values('country', 'jobcount')
+        categories = list(set([ x['country'] for x in pre_data_25]))
+        pre2_data_25 = []
+        total_data_25 = 0
+        for category in sorted(categories):
+            jobsets_for_category = [x['jobcount'] for x in pre_data_25 if x['country'] == category]
+            pre2_data_25.append({'country': category, 'sum': sum(jobsets_for_category)})
+            total_data_25 += len(jobsets_for_category)
+        for item in pre2_data_25:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_25)
+            item['label'] = item['country']
+            item['name'] = item['country']
+            data.append(item)
+    colors = COLORS[id]
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_26(id, query):
+    if 'category' in query:
+        del query['category']
+    query['category__in'] = ['A', 'B', 'C', 'E']
+    data = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_26 = DailyLog.objects.filter(**query).distinct('country').values('country', 'jobdefcount').annotate(sum=Sum('jobdefcount')).order_by('country')
+        total_data_26 = sum([x['sum'] for x in pre_data_26])
+        for item in pre_data_26:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_26)
+            item['label'] = item['country']
+            item['name'] = item['country']
+            data.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_26 = DailyLog.objects.filter(**query).values('country', 'jobdefcount')
+        categories = list(set([ x['country'] for x in pre_data_26]))
+        pre2_data_26 = []
+        total_data_26 = 0
+        for category in sorted(categories):
+            jobsets_for_category = [x['jobdefcount'] for x in pre_data_26 if x['country'] == category]
+            pre2_data_26.append({'country': category, 'sum': sum(jobsets_for_category)})
+            total_data_26 += len(jobsets_for_category)
+        for item in pre2_data_26:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_26)
+            item['label'] = item['country']
+            item['name'] = item['country']
+            data.append(item)
+    colors = COLORS[id]
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot_27(id, query):
+    if 'category' in query:
+        del query['category']
+    query['category__in'] = ['A', 'B', 'C', 'E']
+    data = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_27 = DailyLog.objects.filter(**query).distinct('jobset').values('country').annotate(sum=Count('jobset'))
+        total_data_27 = sum([x['sum'] for x in pre_data_27])
+        for item in pre_data_27:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_27)
+            item['label'] = item['country']
+            item['name'] = item['country']
+            data.append(item)
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_27 = DailyLog.objects.filter(**query).values('country', 'jobset')
+        categories = list(set([ x['country'] for x in pre_data_27]))
+        pre2_data_27 = []
+        total_data_27 = 0
+        for category in sorted(categories):
+            jobsets_for_category = list(set([x['jobset'] for x in pre_data_27 if x['country'] == category]))
+            pre2_data_27.append({'country': category, 'sum': len(jobsets_for_category)})
+            total_data_27 += len(jobsets_for_category)
+        for item in pre2_data_27:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_27)
+            item['label'] = item['country']
+            item['name'] = item['country']
+            data.append(item)
+    colors = COLORS[id]
+    title = PLOT_TITLES['title' + id]
+    unit = PLOT_UNITS[id]
+    return data, colors, title, unit
+
+
+def plot(id, query):
+    dispatch = {
+        '0': plot_nothing, \
+        '01': plot_01, \
+        '02': plot_02, \
+        '03': plot_03, \
+        '04': plot_04, \
+        '05': plot_05, \
+        '06': plot_06, \
+        '07': plot_07, \
+        '08': plot_08, \
+        '09': plot_09, \
+        '10': plot_nothing, \
+        '11': plot_nothing, \
+        '12': plot_nothing, \
+        '13': plot_13, \
+        '14': plot_14, \
+        '15': plot_15, \
+        '16': plot_16, \
+        '17': plot_17, \
+        '18': plot_18, \
+        '19': plot_19, \
+        '20': plot_20, \
+        '21': plot_21, \
+        '22': plot_22, \
+        '23': plot_23, \
+        '24': plot_24, \
+        '25': plot_25, \
+        '26': plot_26, \
+        '27': plot_27, \
+    }
+    if id not in dispatch:
+        return dispatch[0](id, query)
+    return dispatch[id](id, query)
+
+
