@@ -68,6 +68,46 @@ PLOT_TITLES = {
 }
 
 
+PLOT_UNITS = {
+    '01': 'jobs', \
+    '02': 'jobDefs', \
+    '03': 'jobSets', \
+
+    '04': 'jobs', \
+    '05': 'jobDefs', \
+    '06': 'jobSets', \
+    '07': 'jobs', \
+    '08': 'jobDefs', \
+    '09': 'jobSets', \
+
+    ### plots 10 .. 12 are not used, we don't have data for them, since site==cloud for them
+    '10': 'jobs', \
+    '11': 'jobDefs', \
+    '12': 'jobSets', \
+
+    '13': 'jobs', \
+    '14': 'jobDefs', \
+    '15': 'jobSets', \
+
+    '16': 'jobs', \
+    '17': 'jobDefs', \
+
+    '18': 'jobs', \
+    '19': 'jobDefs', \
+
+    '20': 'jobSets', \
+
+    '21': 'jobSets', \
+    '22': 'UserDNs', \
+    '23': 'jobSets', \
+    '24': 'UserDNs', \
+
+    '25': 'jobs', \
+    '26': 'JobDefs', \
+    '27': 'JobSets', \
+}
+
+
 COLORS = {
     '01': ['#FF0000', '#50B432', '#0000FF'],
     '02': ['#FF0000', '#50B432', '#0000FF'],
@@ -86,8 +126,6 @@ def get_colors_dictionary(data, cutoff=None):
     ### init cloud item counters
     for cloud in ADC_COLOR.keys():
         counter[cloud] = 0
-    print ':85', 'data=', data
-    print ':85', 'counter=', counter
     ### loop over data, increment cloud counters -> get predefined colors for sites/clouds
     for item in data:
         append = True
@@ -97,22 +135,18 @@ def get_colors_dictionary(data, cutoff=None):
             else:
                 append = False
         if append:
-#            print '### item=', item
             try:
                 cloud = item['cloud']
                 if cloud in counter:
-                    print 'cloud', cloud, 'idx before', counter[cloud]
                     item_color = ADC_COLOR[cloud][counter[cloud]]
                     if 'site' in item:
                         counter[cloud] += 1
                     if 'country' in item:
                         counter[cloud] += 1
-                    print 'cloud', cloud, 'idx after', counter[cloud]
                 else:
                     item_color = '#FFFFFF'
             except:
                 item_color = '#FFFFFF'
-#            print 'item_color=', item_color
             if 'site' in item:
                 colors[item['site']] = item_color
             else:
@@ -238,6 +272,16 @@ def configure(request_GET):
                 (startdate, enddate)
     
     return startdate, enddate, ndays, errors_GET
+
+
+def configure_plot(request_GET):
+    ### if plotid is provided, use it
+    if 'plotid' in request_GET:
+        plotid = request_GET['plotid']
+    ### plotid was not provided
+    else:
+        plotid = 0
+    return plotid
 
 
 def data_plot_groupby_category(query, values=['category'], \
