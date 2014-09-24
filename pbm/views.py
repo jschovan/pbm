@@ -305,3 +305,39 @@ def single_plot(request):
     return render_to_response('pbm/plot.html', data, RequestContext(request))
 
 
+def single_table(request):
+    """
+        single_table -- pbm's page to view tabular data of a plot
+        
+        :param request: Django's HTTP request 
+        :type request: django.http.HttpRequest
+        
+    """
+    ### configure time interval for queries
+    startdate, enddate, ndays, errors_GET = configure(request.GET)
+    plotid = configure_plot(request.GET)
+
+    ### start the query parameters
+    query = {}
+    ### filter logdate__range
+    query['logdate__range'] = [startdate, enddate]
+
+    dataX, colorsX, titleX, unitX = plot(plotid, query)
+
+
+    ### set request response data
+    data = { \
+        'errors_GET': errors_GET,
+        'startdate': startdate,
+        'enddate': enddate,
+        'ndays': ndays,
+
+        'dataX': prepare_data_for_piechart(data=dataX, unit=unitX),
+        'titleX': titleX,
+        'colorsX': colorsX,
+        'plotid': plotid,
+
+}
+    return render_to_response('pbm/table.html', data, RequestContext(request))
+
+
