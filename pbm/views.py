@@ -298,7 +298,6 @@ def index(request):
         total_data_15 = 0
         for category in sorted(categories):
             jobsets_for_category = list(set([x['jobset'] for x in pre_data_15 if x['cloud'] == category]))
-            print 'Category:', category, 'Jobsets:', jobsets_for_category
             pre2_data_15.append({'cloud': category, 'sum': len(jobsets_for_category)})
             total_data_15 += len(jobsets_for_category)
         for item in pre2_data_15:
@@ -314,21 +313,21 @@ def index(request):
     ### filter category == 'B'
     query['category'] = 'C'
     ###     Plot 16: PanDA Brokerage decision on Jobs - Top sites with share > 1 %
-    pre_data_16 = DailyLog.objects.filter(**query).values('category', 'site').annotate(sum=Sum('jobcount'))
+    pre_data_16 = DailyLog.objects.filter(**query).values('category', 'site', 'cloud').annotate(sum=Sum('jobcount')).order_by('cloud', 'site')
     total_data_16 = sum([x['sum'] for x in pre_data_16])
     data16 = []
     for item in pre_data_16:
         item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_16)
-        item['label'] = item['site']
+        item['label'] = '%s (%s)' % (item['site'], item['cloud'])
         data16.append(item)
 
     ###     Plot 17: PanDA Brokerage decision on JobDefs - Top sites with share > 1 %
-    pre_data_17 = DailyLog.objects.filter(**query).values('category', 'site').annotate(sum=Sum('jobdefcount'))
+    pre_data_17 = DailyLog.objects.filter(**query).values('category', 'site', 'cloud').annotate(sum=Sum('jobdefcount')).order_by('cloud', 'site')
     total_data_17 = sum([x['sum'] for x in pre_data_17])
     data17 = []
     for item in pre_data_17:
         item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_17)
-        item['label'] = item['site']
+        item['label'] = '%s (%s)' % (item['site'], item['cloud'])
         data17.append(item)
 
 
@@ -357,6 +356,44 @@ def index(request):
         item['label'] = item['cloud']
         data19.append(item)
 
+
+    ### User excluded a site on distinct jobSet - With exclude / Without exclude
+    query = {}
+    ### filter logdate__range
+    query['logdate__range'] = [startdate, enddate]
+    ### filter category__in
+    query['category__in'] = ['A', 'B', 'C', 'E']
+    ### User selected a site/User selected a cloud/Panda Brokerage decision
+    ###     Plot 20: User excluded a site on distinct jobSet - With exclude / Without exclude
+    data20 = []
+    try:
+        ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
+        pre_data_20 = DailyLog.objects.filter(**query).distinct('jobset').values('category').annotate(sum=Count('jobset'))
+        total_data_20 = sum([x['sum'] for x in pre_data_20])
+        pre2_data_20 = []
+        for item in [x for x in pre_data_20 if x['category'] == 'E']:
+            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_20)
+            item['label'] = CATEGORY_LABELS[ 'E+' ]
+            data20.append(item)
+        not_excluded = [x for x in pre_data_20 if x['category'] != 'E']
+        for item in not_excluded[:1]:
+            item['percent'] = '%.2f%%' % (100.0 * sum([x['sum'] for x in not_excluded]) / total_data_20)
+            item['label'] = CATEGORY_LABELS[ 'E-' ]
+    except NotImplementedError:
+        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
+        pre_data_20 = DailyLog.objects.filter(**query).values('category', 'jobset')
+        excluded = list(set([ x['jobset'] for x in pre_data_20 if x['category'] == 'E']))
+        not_excluded = list(set([ x['jobset'] for x in pre_data_20 if x['category'] != 'E']))
+        data20.append({'category': 'E', 'sum': len(excluded), \
+                       'percent': '%.2f%%' % (100.0 * len(excluded) / (len(excluded) + len(not_excluded))), \
+                       'label': CATEGORY_LABELS[ 'E+' ]\
+                       })
+        data20.append({'category': 'ABC', 'sum': len(not_excluded), \
+                       'percent': '%.2f%%' % (100.0 * len(not_excluded) / (len(excluded) + len(not_excluded))), \
+                       'label': CATEGORY_LABELS[ 'E-' ]\
+                       })
+        print 'data20', data20
+        print prepare_data_for_piechart(data=data20, unit='jobSets')
 
 
 
@@ -400,16 +437,18 @@ def index(request):
 #        'data15': prepare_data_for_piechart(data=data15, unit='jobSets'),
 #        'title15': PLOT_TITLES['title15'],
 #
-        'data16': prepare_data_for_piechart(data=data16, unit='jobs', cutoff=1.0),
-        'title16': PLOT_TITLES['title16'],
-        'data17': prepare_data_for_piechart(data=data17, unit='jobDefs', cutoff=1.0),
-        'title17': PLOT_TITLES['title17'],
+#        'data16': prepare_data_for_piechart(data=data16, unit='jobs', cutoff=1.0),
+#        'title16': PLOT_TITLES['title16'],
+#        'data17': prepare_data_for_piechart(data=data17, unit='jobDefs', cutoff=1.0),
+#        'title17': PLOT_TITLES['title17'],
+#
+#        'data18': prepare_data_for_piechart(data=data18, unit='jobs'),
+#        'title18': PLOT_TITLES['title18'],
+#        'data19': prepare_data_for_piechart(data=data19, unit='jobDefs'),
+#        'title19': PLOT_TITLES['title19'],
 
-        'data18': prepare_data_for_piechart(data=data18, unit='jobs'),
-        'title18': PLOT_TITLES['title18'],
-        'data19': prepare_data_for_piechart(data=data19, unit='jobDefs'),
-        'title19': PLOT_TITLES['title19'],
-
+        'data20': prepare_data_for_piechart(data=data20, unit='jobSets'),
+        'title20': PLOT_TITLES['title20'],
 #        'dataXX': dataXX,
 
 }

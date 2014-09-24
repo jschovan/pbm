@@ -54,17 +54,17 @@ Showing data for {{ndays}} days from {{startdate}} to {{enddate}}.
 	<a href="#sec.plot15">on jobSets</a>
 </p>
 </div>
-
 <p>PanDA Brokerage decision - Top sites with share &gt; 1 % 
 	<a href="#sec.plot16">on jobs</a>,
 	<a href="#sec.plot17">on jobDefs</a>
 </p>
-
 <p>PanDA Brokerage decision - Per cloud 
 	<a href="#sec.plot18">on jobs</a>,
 	<a href="#sec.plot19">on jobDefs</a>
 </p>
-
+<p>User excluded a site - With exclude / Without exclude 
+	<a href="#sec.plot20">on distinct jobSet</a>,
+</p>
 
 {% comment %}
 
@@ -161,7 +161,6 @@ PanDA Brokerage decision - Top sites with share &gt; 1 %
 <br/>
 <!-- Plot 17: PanDA Brokerage decision on jobDef - Top sites with &gt; 1 % -->
 {% pbm_plot_pie data17 title17 'plot17' %}
-{% endcomment %}
 
 
 
@@ -178,6 +177,20 @@ PanDA Brokerage decision - Per cloud
 <br/>
 <!-- Plot 19: PanDA Brokerage decision on jobDef - Per cloud % -->
 {% pbm_plot_pie data19 title19 'plot19' %}
+
+{% endcomment %}
+
+
+
+<br/><br/><br/>
+
+<div><span style="color: navy; font-weight: bold;">
+User excluded a site on distinct jobSet - With exclude / Without exclude
+</span></div><br/>
+
+<br/>
+<!-- Plot 20: User excluded a site on distinct jobSet - With exclude / Without exclude % -->
+{% pbm_plot_pie data20 title20 'plot20' %}
 
 
 

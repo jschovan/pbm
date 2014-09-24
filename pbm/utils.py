@@ -12,6 +12,9 @@ CATEGORY_LABELS = {
     'C': 'PanDA decides destination', \
     'D': 'Skip by Panda', \
     'E': 'User excluded a site', \
+    'E+': 'With exclude', \
+    'E-': 'Without exclude', \
+
 }
 
 PLOT_TITLES = {
@@ -39,6 +42,8 @@ PLOT_TITLES = {
 
     'title18': 'PanDA Brokerage decision on Jobs - Per cloud', \
     'title19': 'PanDA Brokerage decision on JobDef - Per cloud', \
+
+    'title20': 'User excluded a site on distinct jobSet - With exclude / Without exclude', \
 
 }
 
