@@ -265,20 +265,15 @@ def plot_20(id, query):
         pre_data_20 = DailyLog.objects.filter(**query).values('category', 'jobset')
         excluded = list(set([ x['jobset'] for x in pre_data_20 if x['category'] == 'E']))
         not_excluded = list(set([ x['jobset'] for x in pre_data_20 if x['category'] != 'E']))
-        if len(excluded) + len(not_excluded) < 1:
-            percent_excluded = '%.2f%%' % (0.0)
-            percent_not_excluded = '%.2f%%' % (0.0)
-        else:
-            percent_excluded = '%.2f%%' % (100.0 * len(excluded) / (len(excluded) + len(not_excluded)))
-            percent_not_excluded = '%.2f%%' % (100.0 * len(not_excluded) / (len(excluded) + len(not_excluded)))
-        data.append({'category': 'E', 'sum': len(excluded), \
-                       'percent': percent_excluded, \
-                       'label': CATEGORY_LABELS[ 'E+' ]\
-                       })
-        data.append({'category': 'ABC', 'sum': len(not_excluded), \
-                       'percent': percent_not_excluded, \
-                       'label': CATEGORY_LABELS[ 'E-' ]\
-                       })
+        if len(excluded) + len(not_excluded) > 0:
+            data.append({'category': 'E', 'sum': len(excluded), \
+                           'percent': '%.2f%%' % (100.0 * len(excluded) / (len(excluded) + len(not_excluded))), \
+                           'label': CATEGORY_LABELS[ 'E+' ]\
+                           })
+            data.append({'category': 'ABC', 'sum': len(not_excluded), \
+                           'percent': '%.2f%%' % (100.0 * len(not_excluded) / (len(excluded) + len(not_excluded))), \
+                           'label': CATEGORY_LABELS[ 'E-' ]\
+                           })
     colors = COLORS[id]
     title = PLOT_TITLES['title' + id]
     return data, colors, title
