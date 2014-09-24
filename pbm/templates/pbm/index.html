@@ -17,27 +17,67 @@
 {% block left_menu %}{% endblock %}
 {% block body_mobile %}{% endblock %}
 {% block body %}
+<a name="sec.toc"></a>
 <div><span style="color: navy; font-weight: bold;">Query parameters</span></div>
+<br/>
 Showing data for {{ndays}} days from {{startdate}} to {{enddate}}.
+<br/><br/><br/>
+
+<div><span style="color: navy; font-weight: bold;">Plots listing</span></div>
+<div>
+<br/>
+<p>User selected a site vs. User selected a cloud vs. PanDA Brokerage decision 
+	<a href="#sec.plot01">on jobs</a>,
+	<a href="#sec.plot02">on jobDefs</a>,
+	<a href="#sec.plot03">on jobSets</a>
+</p>
+<p>User selected a site - Top sites with share &gt; 1 % 
+	<a href="#sec.plot04">on jobs</a>,
+	<a href="#sec.plot05">on jobDefs</a>,
+	<a href="#sec.plot06">on jobSets</a>
+</p>
+</div>
+
+{% comment %}
+{% endcomment %}
 
 <br/><br/><br/>
 
 <div><span style="color: navy; font-weight: bold;">
 User selected a site vs. User selected a cloud vs. PanDA Brokerage decision
-</span></div>
-<br/>
+</span></div><br/>
 
-<br/><br/><br/><br/><br/><br/>
+<br/>
 <!-- Plot 1: [User selected a site/User selected a cloud/PanDA Brokerage decision] on Jobs -->
 {% pbm_plot_pie data01 title01 'plot01' %}
 
-<br/><br/><br/><br/><br/><br/>
+<br/>
 <!-- Plot 2: [User selected a site/User selected a cloud/Panda Brokerage decision] on jobDef -->
 {% pbm_plot_pie data02 title02 'plot02' %}
 
-<br/><br/><br/><br/><br/><br/>
+<br/>
 <!-- Plot 3: [User selected a site/User selected a cloud/Panda Brokerage decision] on jobSet -->
 {% pbm_plot_pie data03 title03 'plot03' %}
+
+
+
+<br/><br/><br/>
+
+<div><span style="color: navy; font-weight: bold;">
+User selected a site
+</span></div><br/>
+
+<br/>
+<!-- Plot 4: [User selected a site] on Jobs -->
+{% pbm_plot_pie data04 title04 'plot04' %}
+
+<br/>
+<!-- Plot 5: [User selected a site] on jobDef -->
+{% pbm_plot_pie data05 title05 'plot05' %}
+
+<br/>
+<!-- Plot 6: [User selected a site] on jobSet -->
+{% pbm_plot_pie data06 title06 'plot06' %}
 
 
 
