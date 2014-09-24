@@ -160,9 +160,6 @@ def configure(request_GET):
 def data_plot_groupby_category(query, values=['category'], \
         sum_param='jobcount', label_cols=['category'], label_translation=True, \
         order_by=[]):
-    ### User selected a site/User selected a cloud/Panda Brokerage decision
-    ###     Plot 1: [User selected a site/User selected a cloud/Panda Brokerage decision] on Jobs
-#    pre_data_01 = DailyLog.objects.filter(**query).values('category').annotate(sum=Sum('jobcount'))
     pre_data_01 = DailyLog.objects.filter(**query).values(*values).annotate(sum=Sum(sum_param))
     if len(order_by):
         pre_data_01 = pre_data_01.order_by(*order_by)
@@ -184,13 +181,3 @@ def data_plot_groupby_category(query, values=['category'], \
     return data01
 
 
-
-#    pre_data_01 = DailyLog.objects.filter(**query).values('category').annotate(sum=Sum('jobcount'))
-#    total_data_01 = sum([x['sum'] for x in pre_data_01])
-#    data01 = []
-#    for item in pre_data_01:
-#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_01)
-#        item['label'] = CATEGORY_LABELS[ item['category'] ]
-#        data01.append(item)
-#data01 = data_plot_groupby_category(query, values=['category'], sum_param='jobcount', \
-#                    label_cols=['category'], label_translation=True)

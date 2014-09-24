@@ -41,24 +41,10 @@ def index(request):
 
     ### User selected a site/User selected a cloud/Panda Brokerage decision
 #    ###     Plot 1: [User selected a site/User selected a cloud/Panda Brokerage decision] on Jobs
-#    pre_data_01 = DailyLog.objects.filter(**query).values('category').annotate(sum=Sum('jobcount'))
-#    total_data_01 = sum([x['sum'] for x in pre_data_01])
-#    data01 = []
-#    for item in pre_data_01:
-#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_01)
-#        item['label'] = CATEGORY_LABELS[ item['category'] ]
-#        data01.append(item)
     data01 = data_plot_groupby_category(query, values=['category'], sum_param='jobcount', \
                     label_cols=['category'], label_translation=True)
 
 #    ###     Plot 2: [User selected a site/User selected a cloud/Panda Brokerage decision] on jobDef
-#    pre_data_02 = DailyLog.objects.filter(**query).values('category').annotate(sum=Sum('jobdefcount'))
-#    total_data_02 = sum([x['sum'] for x in pre_data_02])
-#    data02 = []
-#    for item in pre_data_02:
-#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_02)
-#        item['label'] = CATEGORY_LABELS[ item['category'] ]
-#        data02.append(item)
     data02 = data_plot_groupby_category(query, values=['category'], sum_param='jobdefcount', \
                     label_cols=['category'], label_translation=True)
 
@@ -95,24 +81,10 @@ def index(request):
     ### filter category == 'A'
     query['category'] = 'A'
     ###     Plot 4: [User selected a site] on Jobs - Top sites > 1 %
-#    pre_data_04 = DailyLog.objects.filter(**query).values('category', 'site').annotate(sum=Sum('jobcount'))
-#    total_data_04 = sum([x['sum'] for x in pre_data_04])
-#    data04 = []
-#    for item in pre_data_04:
-#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_04)
-#        item['label'] = item['site']
-#        data04.append(item)
     data04 = data_plot_groupby_category(query, values=['category', 'site'], sum_param='jobcount', \
                     label_cols=['site'], label_translation=False)
 
     ###     Plot 5: [User selected a site] on jobDef - Top sites > 1 %
-#    pre_data_05 = DailyLog.objects.filter(**query).values('category', 'site').annotate(sum=Sum('jobdefcount'))
-#    total_data_05 = sum([x['sum'] for x in pre_data_05])
-#    data05 = []
-#    for item in pre_data_05:
-#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_05)
-#        item['label'] = item['site']
-#        data05.append(item)
     data05 = data_plot_groupby_category(query, values=['category', 'site'], sum_param='jobdefcount', \
                     label_cols=['site'], label_translation=False)
 
@@ -152,24 +124,10 @@ def index(request):
     ### filter category == 'A'
     query['category'] = 'A'
     ###     Plot 7: [User selected a site] on Jobs - Per cloud
-#    pre_data_07 = DailyLog.objects.filter(**query).values('category', 'cloud').annotate(sum=Sum('jobcount'))
-#    total_data_07 = sum([x['sum'] for x in pre_data_07])
-#    data07 = []
-#    for item in pre_data_07:
-#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_07)
-#        item['label'] = item['cloud']
-#        data07.append(item)
     data07 = data_plot_groupby_category(query, values=['category', 'cloud'], sum_param='jobcount', \
                     label_cols=['cloud'], label_translation=False)
 
     ###     Plot 8: [User selected a site] on jobDef - Per cloud
-#    pre_data_08 = DailyLog.objects.filter(**query).values('category', 'cloud').annotate(sum=Sum('jobdefcount'))
-#    total_data_08 = sum([x['sum'] for x in pre_data_08])
-#    data08 = []
-#    for item in pre_data_08:
-#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_08)
-#        item['label'] = item['cloud']
-#        data08.append(item)
     data08 = data_plot_groupby_category(query, values=['category', 'cloud'], sum_param='jobdefcount', \
                     label_cols=['cloud'], label_translation=False)
 
@@ -208,24 +166,10 @@ def index(request):
 ##    ### filter category == 'B'
 ##    query['category'] = 'B'
 ##    ###     Plot 10: [User selected a cloud] on Jobs - Top sites > 1 %
-###    pre_data_10 = DailyLog.objects.filter(**query).values('category', 'site').annotate(sum=Sum('jobcount'))
-###    total_data_10 = sum([x['sum'] for x in pre_data_10])
-###    data10 = []
-###    for item in pre_data_10:
-###        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_10)
-###        item['label'] = item['site']
-###        data10.append(item)
 ##    data10 = data_plot_groupby_category(query, values=['category', 'site'], sum_param='jobcount', \
 ##                    label_cols=['site'], label_translation=False)
 #
 ##    ###     Plot 11: [User selected a cloud] on jobDef - Top sites > 1 %
-###    pre_data_11 = DailyLog.objects.filter(**query).values('category', 'site').annotate(sum=Sum('jobdefcount'))
-###    total_data_11 = sum([x['sum'] for x in pre_data_11])
-###    data11 = []
-###    for item in pre_data_11:
-###        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_11)
-###        item['label'] = item['site']
-###        data11.append(item)
 ##    data11 = data_plot_groupby_category(query, values=['category', 'site'], sum_param='jobdefcount', \
 ##                    label_cols=['site'], label_translation=False)
 ##
@@ -265,25 +209,10 @@ def index(request):
     ### filter category == 'B'
     query['category'] = 'B'
     ###     Plot 13: [User selected a cloud] on Jobs - Per cloud
-#    pre_data_13 = DailyLog.objects.filter(**query).values('category', 'cloud').annotate(sum=Sum('jobcount'))
-#    print pre_data_13
-#    total_data_13 = sum([x['sum'] for x in pre_data_13])
-#    data13 = []
-#    for item in pre_data_13:
-#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_13)
-#        item['label'] = item['cloud']
-#        data13.append(item)
     data13 = data_plot_groupby_category(query, values=['category', 'cloud'], sum_param='jobcount', \
                     label_cols=['cloud'], label_translation=False)
 
     ###     Plot 14: [User selected a cloud] on jobDef - Per cloud
-#    pre_data_14 = DailyLog.objects.filter(**query).values('category', 'cloud').annotate(sum=Sum('jobdefcount'))
-#    total_data_14 = sum([x['sum'] for x in pre_data_14])
-#    data14 = []
-#    for item in pre_data_14:
-#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_14)
-#        item['label'] = item['cloud']
-#        data14.append(item)
     data14 = data_plot_groupby_category(query, values=['category', 'cloud'], sum_param='jobdefcount', \
                     label_cols=['cloud'], label_translation=False)
 
@@ -320,25 +249,11 @@ def index(request):
     ### filter category == 'B'
     query['category'] = 'C'
     ###     Plot 16: PanDA Brokerage decision on Jobs - Top sites with share > 1 %
-#    pre_data_16 = DailyLog.objects.filter(**query).values('category', 'site', 'cloud').annotate(sum=Sum('jobcount')).order_by('cloud', 'site')
-#    total_data_16 = sum([x['sum'] for x in pre_data_16])
-#    data16 = []
-#    for item in pre_data_16:
-#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_16)
-#        item['label'] = '%s (%s)' % (item['site'], item['cloud'])
-#        data16.append(item)
     data16 = data_plot_groupby_category(query, values=['category', 'site', 'cloud'], sum_param='jobcount', \
                     label_cols=['site', 'cloud'], label_translation=False, \
                     order_by=['cloud', 'site'])
 
     ###     Plot 17: PanDA Brokerage decision on JobDefs - Top sites with share > 1 %
-#    pre_data_17 = DailyLog.objects.filter(**query).values('category', 'site', 'cloud').annotate(sum=Sum('jobdefcount')).order_by('cloud', 'site')
-#    total_data_17 = sum([x['sum'] for x in pre_data_17])
-#    data17 = []
-#    for item in pre_data_17:
-#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_17)
-#        item['label'] = '%s (%s)' % (item['site'], item['cloud'])
-#        data17.append(item)
     data17 = data_plot_groupby_category(query, values=['category', 'site', 'cloud'], sum_param='jobdefcount', \
                     label_cols=['site', 'cloud'], label_translation=False, \
                     order_by=['cloud', 'site'])
@@ -351,25 +266,10 @@ def index(request):
     ### filter category == 'C'
     query['category'] = 'C'
     ###     Plot 18: PanDA Brokerage decision  on Jobs - Per cloud
-#    pre_data_18 = DailyLog.objects.filter(**query).values('category', 'cloud').annotate(sum=Sum('jobcount'))
-#    print pre_data_18
-#    total_data_18 = sum([x['sum'] for x in pre_data_18])
-#    data18 = []
-#    for item in pre_data_18:
-#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_18)
-#        item['label'] = item['cloud']
-#        data18.append(item)
     data18 = data_plot_groupby_category(query, values=['category', 'cloud'], sum_param='jobcount', \
                     label_cols=['cloud'], label_translation=False)
 
     ###     Plot 19: PanDA Brokerage decision  on jobDef - Per cloud
-#    pre_data_19 = DailyLog.objects.filter(**query).values('category', 'cloud').annotate(sum=Sum('jobdefcount'))
-#    total_data_19 = sum([x['sum'] for x in pre_data_19])
-#    data19 = []
-#    for item in pre_data_19:
-#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_19)
-#        item['label'] = item['cloud']
-#        data19.append(item)
     data19 = data_plot_groupby_category(query, values=['category', 'cloud'], sum_param='jobdefcount', \
                     label_cols=['cloud'], label_translation=False)
 
