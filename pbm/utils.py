@@ -50,6 +50,9 @@ PLOT_TITLES = {
     'title23': 'User excluded a site on jobSet - Per cloud', \
     'title24': 'User excluded a site on distinct DnUser - Per cloud', \
 
+    'title25': 'Jobs submitted by Country', \
+    'title26': 'JobDefs submitted by Country', \
+    'title27': 'JobSets submitted by Country', \
 }
 
 

@@ -73,7 +73,11 @@ Showing data for {{ndays}} days from {{startdate}} to {{enddate}}.
 	<a href="#sec.plot23">on distinct jobSet</a>,
 	<a href="#sec.plot24">on distinct UserDN</a>,
 </p>
-{% comment %}
+<p>Submitted by Country (from UserDN) 
+	<a href="#sec.plot25">jobs</a>,
+	<a href="#sec.plot26">jobDefs</a>,
+	<a href="#sec.plot27">jobSets</a>
+</p>
 
 
 <br/><br/><br/>
@@ -199,7 +203,6 @@ User excluded a site on distinct jobSet - With exclude / Without exclude
 {% pbm_plot_pie data20 title20 'plot20' %}
 
 
-{% endcomment %}
 
 
 <br/><br/><br/>
@@ -232,6 +235,25 @@ User excluded a site - Per cloud
 <!-- Plot 24: User excluded a site on distinct DnUser - Top sites with share > 1 % -->
 {% pbm_plot_pie data24 title24 'plot24' %}
 
+
+
+<br/><br/><br/>
+
+<div><span style="color: navy; font-weight: bold;">
+Submitted by Country (from UserDN)
+</span></div><br/>
+
+<br/>
+<!-- Plot 25: Jobs submitted by Country -->
+{% pbm_plot_pie data25 title25 'plot25' %}
+
+<br/>
+<!-- Plot 26: JobDefs submitted by Country -->
+{% pbm_plot_pie data26 title26 'plot26' %}
+
+<br/>
+<!-- Plot 27: JobSetss submitted by Country -->
+{% pbm_plot_pie data27 title27 'plot27' %}
 
 
 
