@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from django.db.models import Count, Sum
 
 from .models import DailyLog
-
+from .ADC_colors import ADC_COLOR
 
 _logger = logging.getLogger('bigpandamon-pbm')
 
@@ -68,6 +68,58 @@ PLOT_TITLES = {
 }
 
 
+COLORS = {
+    '01': ['#FF0000', '#50B432', '#0000FF'],
+    '02': ['#FF0000', '#50B432', '#0000FF'],
+    '03': ['#FF0000', '#50B432', '#0000FF'],
+    '20': ['#FF0000', '#0000FF'],
+    '25': ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+    '26': ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+    '27': ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+
+}
+
+
+def get_colors_dictionary(data, cutoff=None):
+    colors = {}
+    counter = {}
+    ### init cloud item counters
+    for cloud in ADC_COLOR.keys():
+        counter[cloud] = 0
+    print ':85', 'data=', data
+    print ':85', 'counter=', counter
+    ### loop over data, increment cloud counters -> get predefined colors for sites/clouds
+    for item in data:
+        append = True
+        if cutoff is not None:
+            if cutoff < float(item['percent'][:-1]):
+                append = True
+            else:
+                append = False
+        if append:
+#            print '### item=', item
+            try:
+                cloud = item['cloud']
+                if cloud in counter:
+                    print 'cloud', cloud, 'idx before', counter[cloud]
+                    item_color = ADC_COLOR[cloud][counter[cloud]]
+                    if 'site' in item:
+                        counter[cloud] += 1
+                    if 'country' in item:
+                        counter[cloud] += 1
+                    print 'cloud', cloud, 'idx after', counter[cloud]
+                else:
+                    item_color = '#FFFFFF'
+            except:
+                item_color = '#FFFFFF'
+#            print 'item_color=', item_color
+            if 'site' in item:
+                colors[item['site']] = item_color
+            else:
+                colors[item['cloud']] = item_color
+    return colors
+
+
 def prepare_data_for_piechart(data, unit='jobs', cutoff=None):
     """
         prepare_data_for_piechart
@@ -103,6 +155,37 @@ def prepare_data_for_piechart(data, unit='jobs', cutoff=None):
     if other_item_sum > 0:
         piechart_data.append(['Other (%s %s)' % (other_item_sum, unit), other_item_sum])
     return piechart_data
+
+
+def prepare_colors_for_piechart(data, cutoff=None):
+    """
+        prepare_colors_for_piechart
+        
+        
+        data ... result of a queryset
+        unit ... 'jobs', or 'jobDefs', or 'jobSets'
+        cutoff ... anything with share smaller than cutoff percent will be grouped into 'Other' 
+        
+    """
+    colors_names = get_colors_dictionary(data, cutoff)
+    colors = []
+    other_item_sum = 0
+    for item in data:
+        append = True
+        if cutoff is not None:
+            if cutoff < float(item['percent'][:-1]):
+                append = True
+            else:
+                append = False
+                other_item_sum += int(item['sum'])
+        if append:
+            if item['name'] in colors_names:
+                colors.append(colors_names[item['name']])
+            else:
+                colors.append('#CCCCCC')
+    if other_item_sum > 0:
+        colors.append('#CCCCCC')
+    return colors
 
 
 def configure(request_GET):
@@ -165,7 +248,9 @@ def data_plot_groupby_category(query, values=['category'], \
         pre_data_01 = pre_data_01.order_by(*order_by)
     total_data_01 = sum([x['sum'] for x in pre_data_01])
     data01 = []
+    colors01 = {}
     for item in pre_data_01:
+        item['name'] = item[label_cols[0]]
         item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_01)
         if label_translation:
             if len(label_cols) > 1:
@@ -179,5 +264,47 @@ def data_plot_groupby_category(query, values=['category'], \
                 item['label'] = item[label_cols[0]]
         data01.append(item)
     return data01
+
+
+#def get_colors1(data, cutoff=None):
+#    colors = []
+#    others = False
+#    counter = {}
+#    ### init cloud item counters
+#    for cloud in ADC_COLOR.keys():
+#        counter[cloud] = 0
+#    ### loop over data, increment cloud counters -> get predefined colors for sites
+#    for item in data:
+#        append = True
+#        if cutoff is not None:
+#            if cutoff < float(item['percent'][:-1]):
+#                append = True
+#            else:
+#                append = False
+#                others = True
+#        if append:
+##            print '### item=', item
+#            try:
+#                cloud = item['cloud']
+#                if cloud in counter:
+#                    print 'cloud', cloud, 'idx before', counter[cloud]
+#                    item_color = ADC_COLOR[cloud][counter[cloud]]
+#                    counter[cloud] += 1
+#                    print 'cloud', cloud, 'idx after', counter[cloud]
+#                else:
+#                    item_color = '#FFFFFF'
+#            except:
+#                item_color = '#FFFFFF'
+#            print 'item_color=', item_color
+#            colors.append(item_color)
+#    if others:
+#        print 'item=', 'other'
+#        print 'item_color=', '#030303'
+#        colors.append('#030303')
+##    print '### data', data
+##    print '### colors', colors
+#    return colors
+#
+#
 
 

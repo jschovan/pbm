@@ -6,6 +6,13 @@
 
 <script type="text/javascript" charset="utf-8">
 $(function () {
+
+{% if colors %}
+	Highcharts.setOptions({
+		colors: {{ colors }}
+	});
+{% endif %}
+
 	$('#{{ divid }}').highcharts({
 		chart: {
 			plotBackgroundColor: null,

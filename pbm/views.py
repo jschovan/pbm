@@ -11,10 +11,11 @@ from django.shortcuts import render_to_response, render
 from django.template import RequestContext, loader
 
 from .models import DailyLog
-from .utils import CATEGORY_LABELS, PLOT_TITLES, defaultDatetimeFormat, \
+from .utils import CATEGORY_LABELS, PLOT_TITLES, COLORS, defaultDatetimeFormat, \
 configure, \
-prepare_data_for_piechart, \
+prepare_data_for_piechart, prepare_colors_for_piechart, \
 data_plot_groupby_category
+#, get_colors1 as get_colors
 
 _logger = logging.getLogger('bigpandamon-pbm')
 
@@ -43,10 +44,18 @@ def index(request):
 #    ###     Plot 1: [User selected a site/User selected a cloud/Panda Brokerage decision] on Jobs
     data01 = data_plot_groupby_category(query, values=['category'], sum_param='jobcount', \
                     label_cols=['category'], label_translation=True)
+    if '01' in COLORS:
+        colors01 = COLORS['01']
+    else:
+        colors01 = []
 
 #    ###     Plot 2: [User selected a site/User selected a cloud/Panda Brokerage decision] on jobDef
     data02 = data_plot_groupby_category(query, values=['category'], sum_param='jobdefcount', \
                     label_cols=['category'], label_translation=True)
+    if '02' in COLORS:
+        colors02 = COLORS['02']
+    else:
+        colors02 = []
 
     ###     Plot 3: [User selected a site/User selected a cloud/Panda Brokerage decision] on jobSet
     data03 = []
@@ -72,6 +81,10 @@ def index(request):
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_03)
             item['label'] = CATEGORY_LABELS[ item['category'] ]
             data03.append(item)
+    if '03' in COLORS:
+        colors03 = COLORS['03']
+    else:
+        colors03 = []
 
 
     ### User selected a site - Top sites > 1 %
@@ -99,6 +112,7 @@ def index(request):
         for item in pre_data_06:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_06)
             item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            item['name'] = item['site']
             data06.append(item)
     except NotImplementedError:
         ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
@@ -113,6 +127,7 @@ def index(request):
         for item in pre2_data_06:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_06)
             item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            item['name'] = item['site']
             data06.append(item)
 
 
@@ -139,6 +154,7 @@ def index(request):
         for item in pre_data_09:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_09)
             item['label'] = item['cloud']
+            item['name'] = item['cloud']
             data09.append(item)
     except NotImplementedError:
         ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
@@ -154,6 +170,7 @@ def index(request):
         for item in pre2_data_09:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_09)
             item['label'] = item['cloud']
+            item['name'] = item['cloud']
             data09.append(item)
 
 
@@ -181,6 +198,7 @@ def index(request):
 ##        for item in pre_data_12:
 ##            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_12)
 ##            item['label'] = item['site']
+##            item['name'] = item['site']
 ##            data12.append(item)
 ##    except NotImplementedError:
 ##        ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
@@ -196,6 +214,7 @@ def index(request):
 ##        for item in pre2_data_12:
 ##            item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_12)
 ##            item['label'] = item['site']
+##            item['name'] = item['site']
 ##            data12.append(item)
 ##
 ##
@@ -224,6 +243,7 @@ def index(request):
         for item in pre_data_15:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_15)
             item['label'] = item['cloud']
+            item['name'] = item['cloud']
             data15.append(item)
     except NotImplementedError:
         ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
@@ -238,6 +258,7 @@ def index(request):
         for item in pre2_data_15:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_15)
             item['label'] = item['cloud']
+            item['name'] = item['cloud']
             data15.append(item)
 
 
@@ -307,7 +328,10 @@ def index(request):
                        'percent': '%.2f%%' % (100.0 * len(not_excluded) / (len(excluded) + len(not_excluded))), \
                        'label': CATEGORY_LABELS[ 'E-' ]\
                        })
-
+    if '20' in COLORS:
+        colors20 = COLORS['20']
+    else:
+        colors20 = []
 
 
     ### User excluded a site on jobSet - Top sites with share > 1 %
@@ -325,6 +349,7 @@ def index(request):
         for item in pre_data_21:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_21)
             item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            item['name'] = item['site']
             data21.append(item)
     except NotImplementedError:
         ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
@@ -339,6 +364,7 @@ def index(request):
         for item in pre2_data_21:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_21)
             item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            item['name'] = item['site']
             data21.append(item)
 
     ###     Plot 22: User excluded a site on distinct DnUser - Top sites with share > 1 %
@@ -350,6 +376,7 @@ def index(request):
         for item in pre_data_22:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_22)
             item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            item['name'] = item['site']
             data22.append(item)
     except NotImplementedError:
         ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
@@ -364,6 +391,7 @@ def index(request):
         for item in pre2_data_22:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_22)
             item['label'] = '%s (%s)' % (item['site'], item['cloud'])
+            item['name'] = item['site']
             data22.append(item)
 
 
@@ -382,6 +410,7 @@ def index(request):
         for item in pre_data_23:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_23)
             item['label'] = item['cloud']
+            item['name'] = item['cloud']
             data23.append(item)
     except NotImplementedError:
         ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
@@ -396,6 +425,7 @@ def index(request):
         for item in pre2_data_23:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_23)
             item['label'] = item['cloud']
+            item['name'] = item['cloud']
             data23.append(item)
 
     ###     Plot 24: User excluded a site on distinct DnUser - Per cloud
@@ -407,6 +437,7 @@ def index(request):
         for item in pre_data_24:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_24)
             item['label'] = item['cloud']
+            item['name'] = item['cloud']
             data24.append(item)
     except NotImplementedError:
         ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
@@ -421,6 +452,7 @@ def index(request):
         for item in pre2_data_24:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_24)
             item['label'] = item['cloud']
+            item['name'] = item['cloud']
             data24.append(item)
 
 
@@ -440,6 +472,7 @@ def index(request):
         for item in pre_data_25:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_25)
             item['label'] = item['country']
+            item['name'] = item['country']
             data25.append(item)
     except NotImplementedError:
         ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
@@ -454,7 +487,13 @@ def index(request):
         for item in pre2_data_25:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_25)
             item['label'] = item['country']
+            item['name'] = item['country']
             data25.append(item)
+    if '25' in COLORS:
+        colors25 = COLORS['25']
+    else:
+        colors25 = []
+
 
     ###     Plot 26: JobDefs submitted by Country
     data26 = []
@@ -465,6 +504,7 @@ def index(request):
         for item in pre_data_26:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_26)
             item['label'] = item['country']
+            item['name'] = item['country']
             data26.append(item)
     except NotImplementedError:
         ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
@@ -479,7 +519,12 @@ def index(request):
         for item in pre2_data_26:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_26)
             item['label'] = item['country']
+            item['name'] = item['country']
             data26.append(item)
+    if '26' in COLORS:
+        colors26 = COLORS['26']
+    else:
+        colors26 = []
 
     ###     Plot 27: JobSets submitted by Country
     data27 = []
@@ -490,6 +535,7 @@ def index(request):
         for item in pre_data_27:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_27)
             item['label'] = item['country']
+            item['name'] = item['country']
             data27.append(item)
     except NotImplementedError:
         ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
@@ -504,7 +550,12 @@ def index(request):
         for item in pre2_data_27:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_27)
             item['label'] = item['country']
+            item['name'] = item['country']
             data27.append(item)
+    if '27' in COLORS:
+        colors27 = COLORS['27']
+    else:
+        colors27 = []
 
 
     ### set request response data
@@ -516,67 +567,94 @@ def index(request):
 
         'data01': prepare_data_for_piechart(data=data01, unit='jobs'),
         'title01': PLOT_TITLES['title01'],
+        'colors01': colors01,
         'data02': prepare_data_for_piechart(data=data02, unit='jobDefs'),
         'title02': PLOT_TITLES['title02'],
+        'colors02': colors02,
         'data03': prepare_data_for_piechart(data=data03, unit='jobSets'),
         'title03': PLOT_TITLES['title03'],
+        'colors03': colors03,
 
         'data04': prepare_data_for_piechart(data=data04, unit='jobs', cutoff=1.0),
         'title04': PLOT_TITLES['title04'],
+        'colors04': prepare_colors_for_piechart(data04, cutoff=1.0),
         'data05': prepare_data_for_piechart(data=data05, unit='jobDefs'),
         'title05': PLOT_TITLES['title05'],
+        'colors05': prepare_colors_for_piechart(data05),
         'data06': prepare_data_for_piechart(data=data06, unit='jobSets'),
         'title06': PLOT_TITLES['title06'],
+        'colors06': prepare_colors_for_piechart(data06),
 
         'data07': prepare_data_for_piechart(data=data07, unit='jobs'),
         'title07': PLOT_TITLES['title07'],
+        'colors07': prepare_colors_for_piechart(data07),
         'data08': prepare_data_for_piechart(data=data08, unit='jobDefs'),
         'title08': PLOT_TITLES['title08'],
+        'colors08': prepare_colors_for_piechart(data08),
         'data09': prepare_data_for_piechart(data=data09, unit='jobSets'),
         'title09': PLOT_TITLES['title09'],
+        'colors09': prepare_colors_for_piechart(data09),
 ##
 ##        'data10': prepare_data_for_piechart(data=data10, unit='jobs', cutoff=1.0),
 ##        'title10': PLOT_TITLES['title10'],
+##        'colors10': get_colors(data10, cutoff=1.0),
 ##        'data11': prepare_data_for_piechart(data=data11, unit='jobDefs'),
 ##        'title11': PLOT_TITLES['title11'],
+##        'colors11': get_colors(data11),
 ##        'data12': prepare_data_for_piechart(data=data12, unit='jobSets'),
 ##        'title12': PLOT_TITLES['title12'],
+##        'colors12': get_colors(data12),
 ##
         'data13': prepare_data_for_piechart(data=data13, unit='jobs'),
         'title13': PLOT_TITLES['title13'],
+        'colors13': prepare_colors_for_piechart(data13),
         'data14': prepare_data_for_piechart(data=data14, unit='jobDefs'),
         'title14': PLOT_TITLES['title14'],
+        'colors14': prepare_colors_for_piechart(data14),
         'data15': prepare_data_for_piechart(data=data15, unit='jobSets'),
         'title15': PLOT_TITLES['title15'],
+        'colors15': prepare_colors_for_piechart(data15),
 
         'data16': prepare_data_for_piechart(data=data16, unit='jobs', cutoff=1.0),
         'title16': PLOT_TITLES['title16'],
+        'colors16': prepare_colors_for_piechart(data=data16, cutoff=1.0),
         'data17': prepare_data_for_piechart(data=data17, unit='jobDefs', cutoff=1.0),
         'title17': PLOT_TITLES['title17'],
+        'colors17': prepare_colors_for_piechart(data17, cutoff=1.0),
 
         'data18': prepare_data_for_piechart(data=data18, unit='jobs'),
         'title18': PLOT_TITLES['title18'],
+        'colors18': prepare_colors_for_piechart(data18),
         'data19': prepare_data_for_piechart(data=data19, unit='jobDefs'),
         'title19': PLOT_TITLES['title19'],
+        'colors19': prepare_colors_for_piechart(data19),
 
         'data20': prepare_data_for_piechart(data=data20, unit='jobSets'),
         'title20': PLOT_TITLES['title20'],
+        'colors20': colors20,
 
         'data21': prepare_data_for_piechart(data=data21, unit='jobSets', cutoff=1.0),
         'title21': PLOT_TITLES['title21'],
+        'colors21': prepare_colors_for_piechart(data21, cutoff=1.0),
         'data22': prepare_data_for_piechart(data=data22, unit='UserDNs', cutoff=1.0),
         'title22': PLOT_TITLES['title22'],
+        'colors22': prepare_colors_for_piechart(data22, cutoff=1.0),
         'data23': prepare_data_for_piechart(data=data23, unit='jobSets'),
         'title23': PLOT_TITLES['title24'],
+        'colors23': prepare_colors_for_piechart(data23),
         'data24': prepare_data_for_piechart(data=data24, unit='UserDNs'),
         'title24': PLOT_TITLES['title24'],
+        'colors24': prepare_colors_for_piechart(data24),
 
         'data25': prepare_data_for_piechart(data=data25, unit='jobs', cutoff=1.0),
         'title25': PLOT_TITLES['title25'],
+        'colors25': colors25,
         'data26': prepare_data_for_piechart(data=data26, unit='jobDefs', cutoff=1.0),
         'title26': PLOT_TITLES['title26'],
+        'colors26': colors26,
         'data27': prepare_data_for_piechart(data=data27, unit='jobSets', cutoff=1.0),
         'title27': PLOT_TITLES['title27'],
+        'colors27': colors27,
 
 
 }
