@@ -1,8 +1,13 @@
 {% load url from future %}{% load pbm_extras %}
 
 <a href="#sec.toc">[top]</a>&nbsp;
-<a name="sec.{{ divid }}" href="#sec.{{ divid }}">[link]</a>
+<a name="sec.{{ divid }}" href="{% url 'pbm-index' %}{% if startdate %}?startdate={{ startdate }}{% endif %}{% if enddate %}&amp;enddate={{ enddate }}{% endif %}
+#sec.{{ divid }}">[permalink]</a>
+
+
+
 <div id="{{ divid }}" style="min-width: 450px; height: 500px; max-width: 800px; margin: 0 auto"></div>
+
 
 <script type="text/javascript" charset="utf-8">
 $(function () {

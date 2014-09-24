@@ -154,6 +154,8 @@ def prepare_data_for_piechart(data, unit='jobs', cutoff=None):
             piechart_data.append([ str('%s (%s %s)' % (item['label'], item['sum'], unit)), item['sum']])
     if other_item_sum > 0:
         piechart_data.append(['Other (%s %s)' % (other_item_sum, unit), other_item_sum])
+    if not len(piechart_data):
+        piechart_data.append(['No data available', 0])
     return piechart_data
 
 
