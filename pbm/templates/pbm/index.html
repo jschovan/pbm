@@ -20,7 +20,16 @@
 <a name="sec.toc"></a>
 <div><span style="color: navy; font-weight: bold;">Query parameters</span></div>
 <br/>
-Showing data for {{ndays}} days from {{startdate}} to {{enddate}}.
+Showing data for interval from {{startdate}} to {{enddate}}.
+{% if errors_GET %}
+{% if errors_GET.noparams %}
+	<div><span style="color: red; font-weight: bold;">Query warning.</span> {{errors_GET.noparams}}</div>
+{% else %}
+{% if errors_GET.startdate %}<div><span style="color: red; font-weight: bold;">Query error.</span> {{errors_GET.startdate}}</div>{% endif %}
+{% if errors_GET.enddate %}<div><span style="color: red; font-weight: bold;">Query error.</span> {{errors_GET.enddate}}</div>{% endif %}
+{% if errors_GET.ndays %}<div><span style="color: red; font-weight: bold;">Query error.</span> {{errors_GET.ndays}}</div>{% endif %}
+{% endif %}
+{% endif %}
 <br/><br/><br/>
 
 <div><span style="color: navy; font-weight: bold;">Plots listing</span></div>
@@ -41,13 +50,6 @@ Showing data for {{ndays}} days from {{startdate}} to {{enddate}}.
 	<a href="#sec.plot08">on jobDefs</a>,
 	<a href="#sec.plot09">on jobSets</a>
 </p>
-{% comment %}
-<p>User selected a cloud - Top sites with share &gt; 1 % 
-	<a href="#sec.plot10">on jobs</a>,
-	<a href="#sec.plot11">on jobDefs</a>,
-	<a href="#sec.plot12">on jobSets</a>
-</p>
-{% endcomment %}
 <p>User selected a cloud - Per cloud 
 	<a href="#sec.plot13">on jobs</a>,
 	<a href="#sec.plot14">on jobDefs</a>,
@@ -88,15 +90,16 @@ User selected a site vs. User selected a cloud vs. PanDA Brokerage decision
 
 <br/>
 <!-- Plot 1: [User selected a site/User selected a cloud/PanDA Brokerage decision] on Jobs -->
-{% pbm_plot_pie data01 title01 'plot01' %}
+{% pbm_plot_pie data01 title01 'plot01' startdate enddate %}
+
 
 <br/>
 <!-- Plot 2: [User selected a site/User selected a cloud/Panda Brokerage decision] on jobDef -->
-{% pbm_plot_pie data02 title02 'plot02' %}
+{% pbm_plot_pie data02 title02 'plot02' startdate enddate %}
 
 <br/>
 <!-- Plot 3: [User selected a site/User selected a cloud/Panda Brokerage decision] on jobSet -->
-{% pbm_plot_pie data03 title03 'plot03' %}
+{% pbm_plot_pie data03 title03 'plot03' startdate enddate %}
 
 
 
@@ -108,15 +111,15 @@ User selected a site - Top sites with share &gt; 1 %
 
 <br/>
 <!-- Plot 4: [User selected a site] on Jobs - Top sites with &gt; 1 % -->
-{% pbm_plot_pie data04 title04 'plot04' %}
+{% pbm_plot_pie data04 title04 'plot04' startdate enddate %}
 
 <br/>
 <!-- Plot 5: [User selected a site] on jobDef - Top sites with &gt; 1 % -->
-{% pbm_plot_pie data05 title05 'plot05' %}
+{% pbm_plot_pie data05 title05 'plot05' startdate enddate %}
 
 <br/>
 <!-- Plot 6: [User selected a site] on jobSet - Top sites with &gt; 1 % -->
-{% pbm_plot_pie data06 title06 'plot06' %}
+{% pbm_plot_pie data06 title06 'plot06' startdate enddate %}
 
 
 
@@ -128,15 +131,15 @@ User selected a site - Per cloud
 
 <br/>
 <!-- Plot 7: [User selected a site] on Jobs - Per cloud -->
-{% pbm_plot_pie data07 title07 'plot07' %}
+{% pbm_plot_pie data07 title07 'plot07' startdate enddate %}
 
 <br/>
 <!-- Plot 8: [User selected a site] on jobDef - Per cloud  -->
-{% pbm_plot_pie data08 title08 'plot08' %}
+{% pbm_plot_pie data08 title08 'plot08' startdate enddate %}
 
 <br/>
 <!-- Plot 9: [User selected a site] on jobSet - Per cloud  -->
-{% pbm_plot_pie data09 title09 'plot09' %}
+{% pbm_plot_pie data09 title09 'plot09' startdate enddate %}
 
 
 
@@ -148,15 +151,15 @@ User selected a cloud - Per cloud
 
 <br/>
 <!-- Plot 13: [User selected a cloud] on Jobs - Per cloud -->
-{% pbm_plot_pie data13 title13 'plot13' %}
+{% pbm_plot_pie data13 title13 'plot13' startdate enddate %}
 
 <br/>
 <!-- Plot 14: [User selected a cloud] on jobDef - Per cloud  -->
-{% pbm_plot_pie data14 title14 'plot14' %}
+{% pbm_plot_pie data14 title14 'plot14' startdate enddate %}
 
 <br/>
 <!-- Plot 15: [User selected a cloud] on jobSet - Per cloud  -->
-{% pbm_plot_pie data15 title15 'plot15' %}
+{% pbm_plot_pie data15 title15 'plot15' startdate enddate %}
 
 
 <br/><br/><br/>
@@ -167,11 +170,11 @@ PanDA Brokerage decision - Top sites with share &gt; 1 %
 
 <br/>
 <!-- Plot 16: PanDA Brokerage decision on Jobs - Top sites with &gt; 1 % -->
-{% pbm_plot_pie data16 title16 'plot16' %}
+{% pbm_plot_pie data16 title16 'plot16' startdate enddate %}
 
 <br/>
 <!-- Plot 17: PanDA Brokerage decision on jobDef - Top sites with &gt; 1 % -->
-{% pbm_plot_pie data17 title17 'plot17' %}
+{% pbm_plot_pie data17 title17 'plot17' startdate enddate %}
 
 
 
@@ -183,11 +186,11 @@ PanDA Brokerage decision - Per cloud
 
 <br/>
 <!-- Plot 18: PanDA Brokerage decision on Jobs - Per cloud % -->
-{% pbm_plot_pie data18 title18 'plot18' %}
+{% pbm_plot_pie data18 title18 'plot18' startdate enddate %}
 
 <br/>
 <!-- Plot 19: PanDA Brokerage decision on jobDef - Per cloud % -->
-{% pbm_plot_pie data19 title19 'plot19' %}
+{% pbm_plot_pie data19 title19 'plot19' startdate enddate %}
 
 
 
@@ -200,7 +203,7 @@ User excluded a site on distinct jobSet - With exclude / Without exclude
 
 <br/>
 <!-- Plot 20: User excluded a site on distinct jobSet - With exclude / Without exclude % -->
-{% pbm_plot_pie data20 title20 'plot20' %}
+{% pbm_plot_pie data20 title20 'plot20' startdate enddate %}
 
 
 
@@ -213,11 +216,11 @@ User excluded a site - Top sites with share &gt; 1 %
 
 <br/>
 <!-- Plot 21: User excluded a site - Top sites with share &gt; 1 % -->
-{% pbm_plot_pie data21 title21 'plot21' %}
+{% pbm_plot_pie data21 title21 'plot21' startdate enddate %}
 
 <br/>
 <!-- Plot 22: User excluded a site on distinct DnUser - Top sites with share > 1 % -->
-{% pbm_plot_pie data22 title22 'plot22' %}
+{% pbm_plot_pie data22 title22 'plot22' startdate enddate %}
 
 
 
@@ -229,11 +232,11 @@ User excluded a site - Per cloud
 
 <br/>
 <!-- Plot 23: User excluded a site - Top sites with share &gt; 1 % -->
-{% pbm_plot_pie data23 title23 'plot23' %}
+{% pbm_plot_pie data23 title23 'plot23' startdate enddate %}
 
 <br/>
 <!-- Plot 24: User excluded a site on distinct DnUser - Top sites with share > 1 % -->
-{% pbm_plot_pie data24 title24 'plot24' %}
+{% pbm_plot_pie data24 title24 'plot24' startdate enddate %}
 
 
 
@@ -245,24 +248,15 @@ Submitted by Country (from UserDN)
 
 <br/>
 <!-- Plot 25: Jobs submitted by Country -->
-{% pbm_plot_pie data25 title25 'plot25' %}
+{% pbm_plot_pie data25 title25 'plot25' startdate enddate %}
 
 <br/>
 <!-- Plot 26: JobDefs submitted by Country -->
-{% pbm_plot_pie data26 title26 'plot26' %}
+{% pbm_plot_pie data26 title26 'plot26' startdate enddate %}
 
 <br/>
 <!-- Plot 27: JobSetss submitted by Country -->
-{% pbm_plot_pie data27 title27 'plot27' %}
-
-
-
-{% comment %}
-<br/><br/><br/><br/><br/><br/>
-<!-- DEBUG: all data -->
-{% for x in dataXX %}{{x}}<br/>{% endfor %}
-
-{% endcomment %}
+{% pbm_plot_pie data27 title27 'plot27' startdate enddate %}
 
 
 {% endblock %}

@@ -3,7 +3,18 @@
     
 """
 import logging
+import pytz
+from datetime import datetime, timedelta
+
+from django.db.models import Count, Sum
+
+from .models import DailyLog
+
+
 _logger = logging.getLogger('bigpandamon-pbm')
+
+
+defaultDatetimeFormat = '%Y-%m-%d'
 
 
 CATEGORY_LABELS = {
@@ -16,6 +27,7 @@ CATEGORY_LABELS = {
     'E-': 'Without exclude', \
 
 }
+
 
 PLOT_TITLES = {
     'title01': 'User selected a site/User selected a cloud/PanDA Brokerage decision on Jobs', \
@@ -93,3 +105,92 @@ def prepare_data_for_piechart(data, unit='jobs', cutoff=None):
     return piechart_data
 
 
+def configure(request_GET):
+    errors_GET = {}
+    ### if startdate&enddate are provided, use them
+    if 'startdate' in request_GET and 'enddate' in request_GET:
+        ndays = 7
+        ### startdate
+        startdate = request_GET['startdate']
+        try:
+            dt_start = datetime.strptime(startdate, defaultDatetimeFormat)
+        except ValueError:
+            errors_GET['startdate'] = \
+                'Provided startdate [%s] has incorrect format, expected [%s].' % \
+                (startdate, defaultDatetimeFormat)
+            startdate = datetime.utcnow() - timedelta(days=ndays)
+            startdate = startdate.replace(tzinfo=pytz.utc).strftime(defaultDatetimeFormat)
+        ### enddate
+        enddate = request_GET['enddate']
+        try:
+            dt_end = datetime.strptime(enddate, defaultDatetimeFormat)
+        except ValueError:
+            errors_GET['enddate'] = \
+                'Provided enddate [%s] has incorrect format, expected [%s].' % \
+                (enddate, defaultDatetimeFormat)
+            enddate = datetime.utcnow()
+            enddate = enddate.replace(tzinfo=pytz.utc).strftime(defaultDatetimeFormat)
+    ### if ndays is provided, do query "last N days"
+    elif 'ndays' in request_GET:
+        try:
+            ndays = request_GET['ndays']
+        except:
+            ndays = 8
+            errors_GET['ndays'] = \
+                'No ndays has been provided.Using [%s].' % \
+                (ndays)
+            startdate = datetime.utcnow() - timedelta(days=ndays)
+            startdate = startdate.replace(tzinfo=pytz.utc).strftime(defaultDatetimeFormat)
+            enddate = datetime.utcnow()
+            enddate = enddate.replace(tzinfo=pytz.utc).strftime(defaultDatetimeFormat)
+    ### neither ndays, nor startdate&enddate was provided
+    else:
+        ndays = 8
+        startdate = datetime.utcnow() - timedelta(days=ndays)
+        startdate = startdate.replace(tzinfo=pytz.utc).strftime(defaultDatetimeFormat)
+        enddate = datetime.utcnow()
+        enddate = enddate.replace(tzinfo=pytz.utc).strftime(defaultDatetimeFormat)
+        errors_GET['noparams'] = \
+                'Neither ndays, nor startdate & enddate has been provided. Using startdate=%s and enddate=%s.' % \
+                (startdate, enddate)
+    
+    return startdate, enddate, ndays, errors_GET
+
+
+def data_plot_groupby_category(query, values=['category'], \
+        sum_param='jobcount', label_cols=['category'], label_translation=True, \
+        order_by=[]):
+    ### User selected a site/User selected a cloud/Panda Brokerage decision
+    ###     Plot 1: [User selected a site/User selected a cloud/Panda Brokerage decision] on Jobs
+#    pre_data_01 = DailyLog.objects.filter(**query).values('category').annotate(sum=Sum('jobcount'))
+    pre_data_01 = DailyLog.objects.filter(**query).values(*values).annotate(sum=Sum(sum_param))
+    if len(order_by):
+        pre_data_01 = pre_data_01.order_by(*order_by)
+    total_data_01 = sum([x['sum'] for x in pre_data_01])
+    data01 = []
+    for item in pre_data_01:
+        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_01)
+        if label_translation:
+            if len(label_cols) > 1:
+                item['label'] = '%s (%s)' % (item[label_cols[0]], item[label_cols[1]])
+            else:
+                item['label'] = CATEGORY_LABELS[ item[label_cols[0]] ]
+        else:
+            if len(label_cols) > 1:
+                item['label'] = '%s (%s)' % (item[label_cols[0]], item[label_cols[1]])
+            else:
+                item['label'] = item[label_cols[0]]
+        data01.append(item)
+    return data01
+
+
+
+#    pre_data_01 = DailyLog.objects.filter(**query).values('category').annotate(sum=Sum('jobcount'))
+#    total_data_01 = sum([x['sum'] for x in pre_data_01])
+#    data01 = []
+#    for item in pre_data_01:
+#        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_01)
+#        item['label'] = CATEGORY_LABELS[ item['category'] ]
+#        data01.append(item)
+#data01 = data_plot_groupby_category(query, values=['category'], sum_param='jobcount', \
+#                    label_cols=['category'], label_translation=True)
