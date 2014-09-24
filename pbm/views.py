@@ -210,8 +210,6 @@ def index(request):
 #    query['category'] = 'B'
 #    ###     Plot 10: [User selected a cloud] on Jobs - Top sites > 1 %
 #    pre_data_10 = DailyLog.objects.filter(**query).values('category', 'site').annotate(sum=Sum('jobcount'))
-#    print 'pre_data_10', pre_data_10
-#    print 'dataXX', dataXX
 #    total_data_10 = sum([x['sum'] for x in pre_data_10])
 #    data10 = []
 #    for item in pre_data_10:
@@ -257,7 +255,7 @@ def index(request):
 #
 #
 #
-#    ### User selected a cloud - Per cloud
+    ### User selected a cloud - Per cloud
     query = {}
     ### filter logdate__range
     query['logdate__range'] = [startdate, enddate]
@@ -309,6 +307,59 @@ def index(request):
             data15.append(item)
 
 
+    ### PanDA Brokerage decision - Top sites with share > 1 %
+    query = {}
+    ### filter logdate__range
+    query['logdate__range'] = [startdate, enddate]
+    ### filter category == 'B'
+    query['category'] = 'C'
+    ###     Plot 16: PanDA Brokerage decision on Jobs - Top sites with share > 1 %
+    pre_data_16 = DailyLog.objects.filter(**query).values('category', 'site').annotate(sum=Sum('jobcount'))
+    total_data_16 = sum([x['sum'] for x in pre_data_16])
+    data16 = []
+    for item in pre_data_16:
+        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_16)
+        item['label'] = item['site']
+        data16.append(item)
+
+    ###     Plot 17: PanDA Brokerage decision on JobDefs - Top sites with share > 1 %
+    pre_data_17 = DailyLog.objects.filter(**query).values('category', 'site').annotate(sum=Sum('jobdefcount'))
+    total_data_17 = sum([x['sum'] for x in pre_data_17])
+    data17 = []
+    for item in pre_data_17:
+        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_17)
+        item['label'] = item['site']
+        data17.append(item)
+
+
+    ### PanDA Brokerage decision  - Per cloud
+    query = {}
+    ### filter logdate__range
+    query['logdate__range'] = [startdate, enddate]
+    ### filter category == 'C'
+    query['category'] = 'C'
+    ###     Plot 18: PanDA Brokerage decision  on Jobs - Per cloud
+    pre_data_18 = DailyLog.objects.filter(**query).values('category', 'cloud').annotate(sum=Sum('jobcount'))
+    print pre_data_18
+    total_data_18 = sum([x['sum'] for x in pre_data_18])
+    data18 = []
+    for item in pre_data_18:
+        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_18)
+        item['label'] = item['cloud']
+        data18.append(item)
+
+    ###     Plot 19: PanDA Brokerage decision  on jobDef - Per cloud
+    pre_data_19 = DailyLog.objects.filter(**query).values('category', 'cloud').annotate(sum=Sum('jobdefcount'))
+    total_data_19 = sum([x['sum'] for x in pre_data_19])
+    data19 = []
+    for item in pre_data_19:
+        item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_19)
+        item['label'] = item['cloud']
+        data19.append(item)
+
+
+
+
     ### set request response data
     data = { \
         'startdate': startdate,
@@ -342,12 +393,22 @@ def index(request):
 #        'data12': prepare_data_for_piechart(data=data12, unit='jobSets'),
 #        'title12': PLOT_TITLES['title12'],
 #
-        'data13': prepare_data_for_piechart(data=data13, unit='jobs'),
-        'title13': PLOT_TITLES['title13'],
-        'data14': prepare_data_for_piechart(data=data14, unit='jobDefs'),
-        'title14': PLOT_TITLES['title14'],
-        'data15': prepare_data_for_piechart(data=data15, unit='jobSets'),
-        'title15': PLOT_TITLES['title15'],
+#        'data13': prepare_data_for_piechart(data=data13, unit='jobs'),
+#        'title13': PLOT_TITLES['title13'],
+#        'data14': prepare_data_for_piechart(data=data14, unit='jobDefs'),
+#        'title14': PLOT_TITLES['title14'],
+#        'data15': prepare_data_for_piechart(data=data15, unit='jobSets'),
+#        'title15': PLOT_TITLES['title15'],
+#
+        'data16': prepare_data_for_piechart(data=data16, unit='jobs', cutoff=1.0),
+        'title16': PLOT_TITLES['title16'],
+        'data17': prepare_data_for_piechart(data=data17, unit='jobDefs', cutoff=1.0),
+        'title17': PLOT_TITLES['title17'],
+
+        'data18': prepare_data_for_piechart(data=data18, unit='jobs'),
+        'title18': PLOT_TITLES['title18'],
+        'data19': prepare_data_for_piechart(data=data19, unit='jobDefs'),
+        'title19': PLOT_TITLES['title19'],
 
 #        'dataXX': dataXX,
 

@@ -55,6 +55,17 @@ Showing data for {{ndays}} days from {{startdate}} to {{enddate}}.
 </p>
 </div>
 
+<p>PanDA Brokerage decision - Top sites with share &gt; 1 % 
+	<a href="#sec.plot16">on jobs</a>,
+	<a href="#sec.plot17">on jobDefs</a>
+</p>
+
+<p>PanDA Brokerage decision - Per cloud 
+	<a href="#sec.plot18">on jobs</a>,
+	<a href="#sec.plot19">on jobDefs</a>
+</p>
+
+
 {% comment %}
 
 
@@ -117,34 +128,6 @@ User selected a site - Per cloud
 {% pbm_plot_pie data09 title09 'plot09' %}
 
 
-{% endcomment %}
-
-
-
-{% comment %}
-
-
-<br/><br/><br/>
-
-<div><span style="color: navy; font-weight: bold;">
-User selected a cloud - Top sites with share &gt; 1 %
-</span></div><br/>
-
-<br/>
-<!-- Plot 10: [User selected a cloud] on Jobs - Top sites with &gt; 1 % -->
-{% pbm_plot_pie data10 title10 'plot10' %}
-
-<br/>
-<!-- Plot 11: [User selected a cloud] on jobDef - Top sites with &gt; 1 % -->
-{% pbm_plot_pie data11 title11 'plot11' %}
-
-<br/>
-<!-- Plot 12: [User selected a cloud] on jobSet - Top sites with &gt; 1 % -->
-{% pbm_plot_pie data12 title12 'plot12' %}
-
-
-{% endcomment %}
-
 
 <br/><br/><br/>
 
@@ -163,6 +146,38 @@ User selected a cloud - Per cloud
 <br/>
 <!-- Plot 15: [User selected a cloud] on jobSet - Per cloud  -->
 {% pbm_plot_pie data15 title15 'plot15' %}
+
+
+<br/><br/><br/>
+
+<div><span style="color: navy; font-weight: bold;">
+PanDA Brokerage decision - Top sites with share &gt; 1 %
+</span></div><br/>
+
+<br/>
+<!-- Plot 16: PanDA Brokerage decision on Jobs - Top sites with &gt; 1 % -->
+{% pbm_plot_pie data16 title16 'plot16' %}
+
+<br/>
+<!-- Plot 17: PanDA Brokerage decision on jobDef - Top sites with &gt; 1 % -->
+{% pbm_plot_pie data17 title17 'plot17' %}
+{% endcomment %}
+
+
+
+<br/><br/><br/>
+
+<div><span style="color: navy; font-weight: bold;">
+PanDA Brokerage decision - Per cloud
+</span></div><br/>
+
+<br/>
+<!-- Plot 18: PanDA Brokerage decision on Jobs - Per cloud % -->
+{% pbm_plot_pie data18 title18 'plot18' %}
+
+<br/>
+<!-- Plot 19: PanDA Brokerage decision on jobDef - Per cloud % -->
+{% pbm_plot_pie data19 title19 'plot19' %}
 
 
 
