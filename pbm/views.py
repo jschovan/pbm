@@ -81,40 +81,39 @@ def index(request):
     ### filter category == 'A'
     query['category'] = 'A'
     ###     Plot 4: [User selected a site] on Jobs - Top sites > 1 %
-    data04 = data_plot_groupby_category(query, values=['category', 'site'], sum_param='jobcount', \
-                    label_cols=['site'], label_translation=False)
+    data04 = data_plot_groupby_category(query, values=['category', 'site', 'cloud'], sum_param='jobcount', \
+                    label_cols=['site', 'cloud'], label_translation=False, \
+                    order_by=['cloud', 'site'])
 
     ###     Plot 5: [User selected a site] on jobDef - Top sites > 1 %
-    data05 = data_plot_groupby_category(query, values=['category', 'site'], sum_param='jobdefcount', \
-                    label_cols=['site'], label_translation=False)
+    data05 = data_plot_groupby_category(query, values=['category', 'site', 'cloud'], sum_param='jobdefcount', \
+                    label_cols=['site', 'cloud'], label_translation=False, \
+                    order_by=['cloud', 'site'])
 
     ###     Plot 6: [User selected a site] on jobSet - Top sites > 1 %
     data06 = []
     try:
         ### TODO: FIXME: check that this pre_data_03 queryset works on MySQL and Oracle
-        pre_data_06 = DailyLog.objects.filter(**query).distinct('jobset').values('site').annotate(sum=Count('jobset'))
+        pre_data_06 = DailyLog.objects.filter(**query).distinct('jobset').values('site', 'cloud').annotate(sum=Count('jobset')).order_by('cloud', 'site')
         total_data_06 = sum([x['sum'] for x in pre_data_06])
         for item in pre_data_06:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_06)
-            item['label'] = item['site']
+            item['label'] = '%s (%s)' % (item['site'], item['cloud'])
             data06.append(item)
     except NotImplementedError:
         ### This is queryset and aggregation for SQLite3 backend, as .distinct('jobset') raises NotImplementedError on SQLite3
-        pre_data_06 = DailyLog.objects.filter(**query).values('site', 'jobset')
-        categories = list(set([ x['site'] for x in pre_data_06]))
+        pre_data_06 = DailyLog.objects.filter(**query).values('site', 'cloud', 'jobset').order_by('cloud', 'site')
+        categories = list(set([ (x['site'], x['cloud']) for x in pre_data_06]))
         pre2_data_06 = []
         total_data_06 = 0
-        for category in sorted(categories):
+        for category, cat2 in sorted(categories):
             jobsets_for_category = list(set([x['jobset'] for x in pre_data_06 if x['site'] == category]))
-            print 'Category:', category, 'Jobsets:', jobsets_for_category
-            pre2_data_06.append({'site': category, 'sum': len(jobsets_for_category)})
+            pre2_data_06.append({'site': category, 'cloud': cat2, 'sum': len(jobsets_for_category)})
             total_data_06 += len(jobsets_for_category)
         for item in pre2_data_06:
             item['percent'] = '%.2f%%' % (100.0 * item['sum'] / total_data_06)
-            item['label'] = item['site']
+            item['label'] = '%s (%s)' % (item['site'], item['cloud'])
             data06.append(item)
-
-
 
 
 #    ### User selected a site - Per cloud
