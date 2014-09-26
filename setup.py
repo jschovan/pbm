@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Setup prog for bigpandamon-atlas-filebrowser
+# Setup prog for bigpandamon-brokerage
 #
 #
 from version import __version__, __provides__
