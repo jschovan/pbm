@@ -17,6 +17,7 @@ class DailyLog(models.Model):
     jobset = models.CharField(max_length=300, db_column='JOBSET', blank=True, null=True)
 
     class Meta:
+        app_label = 'pbm'
         db_table = u'dailylogv3'
 
 

@@ -373,3 +373,4 @@ def detail(request):
     }
     return render_to_response('pbm/detail.html', data, RequestContext(request))
 
+
