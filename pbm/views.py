@@ -183,6 +183,7 @@ def index(request):
         'startdate': startdate,
         'enddate': enddate,
         'ndays': ndays,
+        'viewParams': {'MON_VO': 'ATLAS'},
 
         'data01': prepare_data_for_piechart(data=data01, unit=unit01),
         'title01': title01,
@@ -294,6 +295,7 @@ def single_plot(request):
         'startdate': startdate,
         'enddate': enddate,
         'ndays': ndays,
+        'viewParams': {'MON_VO': 'ATLAS'},
 
         'dataX': prepare_data_for_piechart(data=dataX, unit=unitX),
         'titleX': titleX,
@@ -329,6 +331,7 @@ def single_table(request):
         'startdate': startdate,
         'enddate': enddate,
         'ndays': ndays,
+        'viewParams': {'MON_VO': 'ATLAS'},
 
         'dataX': prepare_data_for_piechart(data=dataX, unit=unitX),
         'titleX': titleX,
@@ -365,6 +368,7 @@ def detail(request):
         'startdate': startdate,
         'enddate': enddate,
         'ndays': ndays,
+        'viewParams': {'MON_VO': 'ATLAS'},
 
         'dataX': prepare_data_for_piechart(data=dataX, unit=unitX),
         'titleX': titleX,
