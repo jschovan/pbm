@@ -1,5 +1,5 @@
 """ 
-    atlas.version 
+    pbm.version 
 """
 import commands
 import ConfigParser
