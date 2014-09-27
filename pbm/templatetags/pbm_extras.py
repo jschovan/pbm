@@ -4,6 +4,9 @@
 import logging
 from django import template
 from django.template.loader import render_to_string
+from django.conf import settings
+
+
 ##from core.common.utils import getPrefix, getContextVariables
 #from ...common.utils import getPrefix, getContextVariables, getAoColumnsList
 
@@ -29,6 +32,7 @@ def pbm_plot_pie(data, title='', divid='plot', startdate='', enddate='', \
         'enddate': enddate, \
         'colors': colors, \
         'plotid': plotid, \
+        'STATIC_URL': settings.STATIC_URL, \
     }
     return render_to_string(template, returnData)
 
@@ -48,6 +52,7 @@ def pbm_table_pie(data, title='', divid='plot', startdate='', enddate='', \
         'enddate': enddate, \
         'colors': colors, \
         'plotid': plotid, \
+        'STATIC_URL': settings.STATIC_URL, \
     }
     return render_to_string(template, returnData)
 

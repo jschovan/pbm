@@ -13,6 +13,11 @@
 {% block header-nav-chain-6 %}{% endblock %}
 {% block left_menu %}{% endblock %}
 {% block body_mobile %}{% endblock %}
+{% block extra_js %}
+	<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}/js/highcharts/highcharts.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}/js/highcharts/modules/exporting.js"></script>
+{% endblock %}
 {% block body %}
 <a name="sec.toc"></a>
 <div><span style="color: navy; font-weight: bold;">Query parameters</span></div>
@@ -257,9 +262,4 @@ Submitted by Country (from UserDN)
 
 {% endblock %}
 
-{% block extra_js %}
-	<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery-1.9.1.min.js"></script>
-	<script type="text/javascript" src="{{ STATIC_URL }}/js/highcharts/highcharts.js"></script>
-	<script type="text/javascript" src="{{ STATIC_URL }}/js/highcharts/modules/exporting.js"></script>
-{% endblock %}
 
