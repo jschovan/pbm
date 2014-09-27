@@ -1,4 +1,9 @@
 {% load url from future %}{% load pbm_extras %}
+{% block extra_js %}
+	<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}/js/highcharts/highcharts.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}/js/highcharts/modules/exporting.js"></script>
+{% endblock %}
 
 <a href="#sec.toc">[top]</a>&nbsp;
 <a name="sec.{{ divid }}" href="{% url 'pbm-detail' %}{% if startdate %}?startdate={{ startdate }}{% endif %}{% if enddate %}&amp;enddate={{ enddate }}{% endif %}{% if plotid %}&amp;plotid={{ plotid }}{% endif %}#sec.toc">[permalink]</a>&nbsp;
