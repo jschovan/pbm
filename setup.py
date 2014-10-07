@@ -4,7 +4,8 @@
 #
 #
 from version import __version__, __provides__
-prefix = '/data/atlpan/bigpandamon'
+#prefix = '/data/atlpan/bigpandamon'
+prefix = '/data/wenaus/bigpandamon'
 lib_prefix = 'lib/python2.6/site-packages/'
 expected_extensions = ['.html', '.js', '.css', '.png', '.gif', '.ico', '-example'] #FIXME
 src_ext = [ '.py' ]
@@ -187,13 +188,14 @@ setup(
     url='https://twiki.cern.ch/twiki/bin/view/PanDA/BigPanDAmonitoring',
     packages=[ #FIXME
         'pbm',
-	'pbm.templatetags',
+        'pbm.templatetags',
     ],
     data_files=[ #FIXME
                 # HTML templates and static files
                 ]
                  + gen_data_files(
                     "pbm/templates",
+                    "pbm/settings",
                 )
     ,         
     cmdclass={'install': install_panda,
