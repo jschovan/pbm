@@ -394,12 +394,12 @@ def api_pbm_collector(request):
     """
         api_pbm_collector -- return json with Pandalog data for specified GET parameters
             ?type ... Pandalog flavour, e.g. 'pd2p', 'brokerage', 'analy_brokerage'
-            ?ndays ... date range of how many days in past
+            ?nhours ... date range of how many hours in past
             ?starttime ... datetime from, format %Y-%m-%dT%H:%M:%S
             ?endtime ... datetime to, format %Y-%m-%dT%H:%M:%S
             
-            ndays has higher priority than starttime, endtime
-                if ndays is specified, starttime&endtime are not taken into account.
+            nhours has higher priority than starttime, endtime
+                if nhours is specified, starttime&endtime are not taken into account.
         
         :param request: Django's HTTP request 
         :type request: django.http.HttpRequest
@@ -430,7 +430,7 @@ def api_pbm_collector(request):
             errors['missingparameter'] += msg
 
     ### time range from request.GET
-    optionalFields = ['starttime', 'endtime', 'ndays']
+    optionalFields = ['starttime', 'endtime', 'nhours']
     for optionalField in optionalFields:
         try:
             if len(request.GET[optionalField]) < 1:
@@ -445,17 +445,17 @@ def api_pbm_collector(request):
                 warnings['missingoptionalparameter'] = ''
             warnings['missingoptionalparameter'] += msg
     ### get values for optional timerange parameters
-    ndays = 1
+    nhours = 1
     starttime = None
     endtime = None
     startdate = None
     enddate = None
-    if 'ndays' in request.GET:
+    if 'nhours' in request.GET:
         try:
-            ndays = int(request.GET['ndays'])
+            nhours = int(request.GET['nhours'])
         except:
-            ndays = 1
-        starttime = (datetime.utcnow() - timedelta(days=ndays)).strftime(collectorTimeFormat)
+            nhours = 1
+        starttime = (datetime.utcnow() - timedelta(hours=nhours)).strftime(collectorTimeFormat)
         endtime = datetime.utcnow().strftime(collectorTimeFormat)
         startdate = starttime
         enddate = endtime
@@ -465,10 +465,10 @@ def api_pbm_collector(request):
                 starttime = datetime.strptime(request.GET['starttime'], collectorDatetimeFormat).strftime(collectorTimeFormat)
                 startdate = starttime
             except:
-                starttime = (datetime.utcnow() - timedelta(days=ndays)).strftime(collectorTimeFormat)
+                starttime = (datetime.utcnow() - timedelta(hours=nhours)).strftime(collectorTimeFormat)
                 startdate = starttime
         else:
-            starttime = (datetime.utcnow() - timedelta(days=ndays)).strftime(collectorTimeFormat)
+            starttime = (datetime.utcnow() - timedelta(hours=nhours)).strftime(collectorTimeFormat)
             startdate = starttime
 
         if 'endtime' in request.GET:

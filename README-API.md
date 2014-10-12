@@ -11,12 +11,12 @@ API: ?type=XYZ
 The 'type' parameter is compulsory.
 
 There are optional parameters: 
-* 'ndays' to show last N days worth of log entries. Please note that max(ndays)=10. Default value is 'ndays'=1.
+* 'nhours' to show last N hours worth of log entries. Please note that max(nhours)=10*24. Default value is 'nhours'=1.
 * 'starttime' and 'endtime' as desired time range boundaries, expected format is datetime.datetime.isoformat().
 
-**N.B.** 'ndays' has higher priority, therefore if 'ndays' is specified, 'starttime' and 'endtime' are not taken into account. 
-If 'ndays' is not specified and neither is 'starttime', 'starttime' is set to (datetime.datetime.utcnow()-timedelta(days=1)). 
-If 'ndays' is not specified and neither is 'endtime', 'endtime' is set to datetime.datetime.utcnow(). 
+**N.B.** 'nhours' has higher priority, therefore if 'nhours' is specified, 'starttime' and 'endtime' are not taken into account. 
+If 'nhours' is not specified and neither is 'starttime', 'starttime' is set to (datetime.datetime.utcnow()-timedelta(hours=1)). 
+If 'nhours' is not specified and neither is 'endtime', 'endtime' is set to datetime.datetime.utcnow(). 
 
 The API has 3 HTTP return states: 200, 404, 400.
 
@@ -79,7 +79,7 @@ Successful pass, only 'type' specified:
 'query': {'time__range': ['2014-10-11 15:10:15', '2014-10-12 15:10:15'], 'type': u'analy_brokerage', 
           'bintime__range': ['2014-10-11 15:10:15', '2014-10-12 15:10:15']}, 
 'errors': {}, 
-'warnings': {'missingoptionalparameter': 'Missing optional GET parameter starttime. Missing optional GET parameter endtime. Missing optional GET parameter ndays. '}, 
+'warnings': {'missingoptionalparameter': 'Missing optional GET parameter starttime. Missing optional GET parameter endtime. Missing optional GET parameter nhours. '}, 
 'nrecords': 1208, 
 'data': [{'bintime': '2014-10-11T23:15:46', 'pid': 0, 'module': u'broker', 'line': 298, 
           'message': u"dn=\\'SomeUserDN\\' : jobset=6040 jobdef=6042 : nJobs=20 countryGroup=de", 
@@ -91,13 +91,13 @@ Successful pass, only 'type' specified:
   ```
 
 
-Successful pass, 'type' and 'ndays' specified:
+Successful pass, 'type' and 'nhours' specified:
   ```
 # curl -v -H 'Accept: application/json' -H 'Content-Type: application/json' \
-  "http://HOSTNAME/pbm/api/?type=analy_brokerage&ndays=1"
+  "http://HOSTNAME/pbm/api/?type=analy_brokerage&nhours=1"
 * About to connect() to HOSTNAME port 80 (#0)
 *   Trying IP-ADDRESS... connected
-> GET /pbm/api/?type=analy_brokerage&ndays=1 HTTP/1.1
+> GET /pbm/api/?type=analy_brokerage&nhours=1 HTTP/1.1
 > User-Agent: curl/7.22.0 (x86_64-pc-linux-gnu) libcurl/7.22.0 OpenSSL/1.0.1 zlib/1.2.3.4 libidn/1.23 librtmp/2.3
 > Host: HOSTNMAE
 > Accept: application/json
@@ -113,7 +113,7 @@ Successful pass, 'type' and 'ndays' specified:
 < Content-Type: text/html; charset=utf-8
 < 
 [data not shown]
-{'timestamp': '2014-10-12T15:16:18.911275', 'GET_parameters': {u'type': 'analy_brokerage', u'ndays': '1'}, 
+{'timestamp': '2014-10-12T15:16:18.911275', 'GET_parameters': {u'type': 'analy_brokerage', u'nhours': '1'}, 
 'query': {'time__range': ['2014-10-11 15:16:18', '2014-10-12 15:16:18'], 'type': u'analy_brokerage', 
           'bintime__range': ['2014-10-11 15:16:18', '2014-10-12 15:16:18']}
 'errors': {}, 
@@ -156,7 +156,7 @@ Successful pass, 'type' and 'starttime' and 'endtime' specified:
 'query':  {'time__range': ['2014-10-12 09:00:00', '2014-10-12 13:00:00'], 'type': u'analy_brokerage', 
            'bintime__range': ['2014-10-12 09:00:00', '2014-10-12 13:00:00']}
 'errors': {}, 
-'warnings': {'missingoptionalparameter': 'Missing optional GET parameter ndays. '}, 
+'warnings': {'missingoptionalparameter': 'Missing optional GET parameter nhours. '}, 
 'nrecords': 31, 
 'data': [{'bintime': '2014-10-12T12:59:13', 'pid': 0, 'module': u'broker', 'line': 298, 
           'message': u"dn=\\'SomeUserDN\\' : jobset=3210 jobdef=5543 : nJobs=20 countryGroup=us", 
@@ -197,7 +197,7 @@ Missing _type_ parameter:
                        'time__range': ['2014-10-11 15:28:30', '2014-10-12 15:28:30'], 
                        'bintime__range': ['2014-10-11 15:28:30', '2014-10-12 15:28:30']}", 
            'missingparameter': 'Missing expected GET parameter type. '}, 
-'warnings': {'missingoptionalparameter': 'Missing optional GET parameter starttime. Missing optional GET parameter endtime. Missing optional GET parameter ndays. '}, 
+'warnings': {'missingoptionalparameter': 'Missing optional GET parameter starttime. Missing optional GET parameter endtime. Missing optional GET parameter nhours. '}, 
 'query': {'time__range': ['2014-10-11 15:28:30', '2014-10-12 15:28:30'], 'type': None, 
           'bintime__range': ['2014-10-11 15:28:30', '2014-10-12 15:28:30']}, 
 'nrecords': 0, 'data': []}
@@ -233,7 +233,7 @@ Non-existing _type_:
 'errors': {'lookup': "Log record for parameters has not been found. 
                       {'time__range': ['2014-10-11 15:31:46', '2014-10-12 15:31:46'], 'type': u'blah', 
                        'bintime__range': ['2014-10-11 15:31:46', '2014-10-12 15:31:46']}"}, 
-'warnings': {'missingoptionalparameter': 'Missing optional GET parameter starttime. Missing optional GET parameter endtime. Missing optional GET parameter ndays. '}, 
+'warnings': {'missingoptionalparameter': 'Missing optional GET parameter starttime. Missing optional GET parameter endtime. Missing optional GET parameter nhours. '}, 
 'query': {'time__range': ['2014-10-11 15:31:46', '2014-10-12 15:31:46'], 'type': u'blah', 
           'bintime__range': ['2014-10-11 15:31:46', '2014-10-12 15:31:46']}, 
 'nrecords': 0, 'data': []}
