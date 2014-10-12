@@ -15,4 +15,5 @@ urlpatterns = patterns('',
     url(r'^plot/$', pbm_views.single_plot, name='pbm-plot'),
     url(r'^table/$', pbm_views.single_table, name='pbm-table'),
     url(r'^detail/$', pbm_views.detail, name='pbm-detail'),
+    url(r'^api/$', pbm_views.api_pbm_collector, name='api_pbm_collector'),
 )
