@@ -3,8 +3,8 @@ dbaccess = {
     'default': {}, 
     'pbm': {
          'ENGINE':'django.db.backends.oracle',
-         'NAME': 'INTR',
-         'HOST': 'INTR',
+         'NAME': 'ADCR',
+         'HOST': 'ADCR',
          'USER': 'ATLAS_PANDABROMON_R',
          'PASSWORD': 'FIXME',
     },
