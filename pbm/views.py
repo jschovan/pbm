@@ -445,7 +445,7 @@ def api_pbm_collector(request):
                 warnings['missingoptionalparameter'] = ''
             warnings['missingoptionalparameter'] += msg
     ### get values for optional timerange parameters
-    nhours = 1
+    nhours = 6
     starttime = None
     endtime = None
     startdate = None
@@ -454,7 +454,7 @@ def api_pbm_collector(request):
         try:
             nhours = int(request.GET['nhours'])
         except:
-            nhours = 1
+            nhours = 6
         starttime = (datetime.utcnow() - timedelta(hours=nhours)).strftime(collectorTimeFormat)
         endtime = datetime.utcnow().strftime(collectorTimeFormat)
         startdate = starttime
