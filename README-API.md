@@ -11,11 +11,11 @@ API: ?type=XYZ
 The 'type' parameter is compulsory.
 
 There are optional parameters: 
-* 'nhours' to show last N hours worth of log entries. Please note that max(nhours)=10*24. Default value is 'nhours'=1.
+* 'nhours' to show last N hours worth of log entries. Please note that max(nhours)=10*24. Default value is 'nhours'=6.
 * 'starttime' and 'endtime' as desired time range boundaries, expected format is datetime.datetime.isoformat().
 
 **N.B.** 'nhours' has higher priority, therefore if 'nhours' is specified, 'starttime' and 'endtime' are not taken into account. 
-If 'nhours' is not specified and neither is 'starttime', 'starttime' is set to (datetime.datetime.utcnow()-timedelta(hours=1)). 
+If 'nhours' is not specified and neither is 'starttime', 'starttime' is set to (datetime.datetime.utcnow()-timedelta(hours=6)). 
 If 'nhours' is not specified and neither is 'endtime', 'endtime' is set to datetime.datetime.utcnow(). 
 
 The API has 3 HTTP return states: 200, 404, 400.
